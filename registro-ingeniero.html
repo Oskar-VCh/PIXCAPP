@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>Registro Ingeniero - PIXCAPP</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           PIXCAPP - REGISTRO INGENIERO STYLES (VERSIÓN FINAL)
+           ============================================ */
+        
+        :root {
+            --color-primary: #2E7D32;
+            --color-primary-light: #4CAF50;
+            --color-primary-dark: #1B5E20;
+            --color-background: #F5F7FA;
+            --color-surface: #FFFFFF;
+            --color-text-primary: #1A202C;
+            --color-text-secondary: #2D3748;
+            --color-text-muted: #4A5568;
+            --color-border: #E2E8F0;
+            --color-error: #E53E3E;
+            --color-success: #276749;
+            --color-info: #2B6CB0;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+            
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+            
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+        }
+        
+        [data-theme="dark"] {
+            --color-primary: #66BB6A;
+            --color-primary-light: #81C784;
+            --color-primary-dark: #388E3C;
+            --color-background: #0F172A;
+            --color-surface: #1E293B;
+            --color-text-primary: #F8FAFC;
+            --color-text-secondary: #E2E8F0;
+            --color-text-muted: #CBD5E1;
+            --color-border: #334155;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            color: var(--color-text-primary);
+            background-color: var(--color-background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color var(--transition-base), color var(--transition-base);
+        }
+        
+        /* Header */
+        .header {
+            background-color: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            box-shadow: var(--shadow-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .logo-img {
+            height: 40px;
+            width: auto;
+        }
+
+        .logo-icon {
+            transition: filter 0.3s ease;
+        }
+
+        body:not([data-theme="dark"]) .logo-icon {
+            filter: brightness(0) invert(0);
+        }
+
+        [data-theme="dark"] .logo-icon {
+            filter: brightness(0) invert(1);
+        }
+        
+        .logo-text {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+        
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-text-secondary);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+        
+        .back-link:hover {
+            color: var(--color-primary);
+        }
+        
+        /* Main */
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            min-height: calc(100vh - 73px);
+        }
+        
+        /* Panel Izquierdo - Formulario */
+        .register-panel {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-2xl);
+            background-color: var(--color-surface);
+            overflow-y: auto;
+        }
+        
+        .register-content {
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .register-header {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .register-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .register-title i {
+            color: var(--color-primary);
+            font-size: var(--font-size-2xl);
+        }
+        
+        .register-subtitle {
+            color: var(--color-text-muted);
+            font-size: var(--font-size-sm);
+        }
+        
+        /* Info Box - Proceso de validación */
+        .info-box {
+            background-color: rgba(43, 108, 176, 0.1);
+            border: 1px solid var(--color-info);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+            display: flex;
+            gap: var(--spacing-md);
+        }
+        
+        .info-box i {
+            color: var(--color-info);
+            font-size: 1.5rem;
+        }
+        
+        .info-box-content h4 {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+            color: var(--color-text-primary);
+        }
+        
+        .info-box-content p {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .info-box-content .steps {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+        }
+        
+        .info-box-content .step-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-muted);
+        }
+        
+        .info-box-content .step-item i {
+            font-size: var(--font-size-xs);
+            color: var(--color-success);
+        }
+        
+        /* Foto de perfil */
+        .photo-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .photo-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: var(--radius-full);
+            background-color: var(--color-background);
+            border: 2px dashed var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .photo-preview:hover {
+            border-color: var(--color-primary);
+        }
+        
+        .photo-preview i {
+            font-size: 2.5rem;
+            color: var(--color-text-muted);
+        }
+        
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .photo-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        .btn-outline-sm {
+            padding: var(--spacing-xs) var(--spacing-md);
+            background: none;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .btn-outline-sm:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+        
+        /* Form */
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+        }
+        
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+        }
+        
+        .form-label i {
+            color: var(--color-primary);
+            width: 16px;
+        }
+        
+        .form-label .required {
+            color: var(--color-error);
+            margin-left: var(--spacing-xs);
+        }
+        
+        .form-label .optional {
+            color: var(--color-text-muted);
+            font-weight: 400;
+            margin-left: auto;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: var(--spacing-md);
+            color: var(--color-text-muted);
+            font-size: 1rem;
+            z-index: 1;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem var(--spacing-md) 0.875rem 2.75rem;
+            font-size: var(--font-size-base);
+            font-family: var(--font-family);
+            color: var(--color-text-primary);
+            background-color: var(--color-background);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+        
+        .form-input::placeholder {
+            color: var(--color-text-muted);
+            opacity: 0.7;
+        }
+        
+        .form-input.error {
+            border-color: var(--color-error);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: var(--spacing-md);
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            font-size: 1rem;
+            transition: color var(--transition-fast);
+        }
+        
+        .password-toggle:hover {
+            color: var(--color-primary);
+        }
+        
+        .error-message {
+            color: var(--color-error);
+            font-size: var(--font-size-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-xs);
+        }
+        
+        /* Alert */
+        .alert {
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--font-size-sm);
+        }
+        
+        .alert-error {
+            background-color: rgba(229, 62, 62, 0.1);
+            border: 1px solid var(--color-error);
+            color: var(--color-error);
+        }
+        
+        .alert-success {
+            background-color: rgba(39, 103, 73, 0.1);
+            border: 1px solid var(--color-success);
+            color: var(--color-success);
+        }
+        
+        /* Botones */
+        .form-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: 0.875rem 1.5rem;
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            line-height: 1.5;
+            text-align: center;
+            border: 2px solid transparent;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white !important;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Terms */
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+            margin: var(--spacing-md) 0;
+        }
+        
+        .terms-checkbox input {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--color-primary);
+            cursor: pointer;
+        }
+        
+        .terms-checkbox label {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+        }
+        
+        .terms-checkbox a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Login Link */
+        .login-link {
+            text-align: center;
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .login-link p {
+            color: var(--color-text-muted);
+            font-size: var(--font-size-sm);
+        }
+        
+        .login-link a {
+            color: var(--color-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Panel Derecho - Imagen Hero */
+        .hero-panel {
+            flex: 1;
+            position: relative;
+            background-image: url('assets/img/hero-bg.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-3xl);
+        }
+        
+        .hero-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+            opacity: 0.5;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            color: white;
+            max-width: 500px;
+        }
+        
+        .hero-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .hero-title {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: white;
+        }
+        
+        .hero-text {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-xl);
+            opacity: 0.95;
+            line-height: 1.7;
+        }
+        
+        .hero-features {
+            list-style: none;
+        }
+        
+        .hero-features li {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-base);
+        }
+        
+        .hero-features li i {
+            color: white;
+            font-size: 1.25rem;
+            width: 24px;
+        }
+        
+        /* Spinner */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: var(--spacing-lg);
+            color: var(--color-text-muted);
+            font-size: var(--font-size-sm);
+            border-top: 1px solid var(--color-border);
+            background-color: var(--color-surface);
+        }
+        
+        .footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+            
+            .register-panel {
+                padding: var(--spacing-lg);
+                flex: 1;
+            }
+            
+            .hero-panel {
+                display: none;
+            }
+            
+            .header-content {
+                padding: 0;
+            }
+            
+            .logo-text {
+                font-size: var(--font-size-lg);
+            }
+            
+            .logo-img {
+                height: 32px;
+            }
+            
+            .back-link span {
+                display: none;
+            }
+            
+            .register-title {
+                font-size: var(--font-size-xl);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .register-content {
+                max-width: 500px;
+            }
+            
+            .hero-panel {
+                display: flex;
+            }
+        }
+        
+        :focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="assets/img/logo.png" alt="PIXCAPP Logo" class="logo-img logo-icon">
+                <span class="logo-text">PIXCAPP</span>
+            </div>
+            
+            <div class="header-actions">
+                <a href="index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver al inicio</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Panel Izquierdo - Formulario -->
+        <div class="register-panel">
+            <div class="register-content">
+                <div class="register-header">
+                    <h1 class="register-title">
+                        Registro de Ingeniero
+                    </h1>
+                    <p class="register-subtitle">Solicita tu cuenta como asesor técnico</p>
+                </div>
+                
+                <!-- Info Box -->
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="info-box-content">
+                        <h4>Proceso de validación</h4>
+                        <p>Tu cuenta quedará pendiente de revisión por un administrador.</p>
+                        <div class="steps">
+                            <div class="step-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>1. Completa el formulario con tu cédula profesional</span>
+                            </div>
+                            <div class="step-item">
+                                <i class="fas fa-clock"></i>
+                                <span>2. Un administrador validará tu información</span>
+                            </div>
+                            <div class="step-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>3. Recibirás una notificación en máximo 24 horas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Alert Container -->
+                <div id="alertContainer"></div>
+                
+                <!-- Registration Form -->
+                <form id="registerForm" class="register-form">
+                    <div class="photo-upload">
+                        <div class="photo-preview" id="photoPreview" onclick="document.getElementById('fotoPerfil').click()">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <input type="file" id="fotoPerfil" accept="image/*" style="display: none;">
+                        <div class="photo-actions">
+                            <button type="button" class="btn-outline-sm" onclick="document.getElementById('fotoPerfil').click()">
+                                <i class="fas fa-camera"></i> Subir foto (opcional)
+                            </button>
+                            <button type="button" class="btn-outline-sm" id="removePhoto" style="display: none;">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="nombre">
+                            <i class="fas fa-user"></i>
+                            Nombre completo <span class="required">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user-circle input-icon"></i>
+                            <input type="text" id="nombre" name="nombre" class="form-input" placeholder="Ej: Ing. María Martínez" required>
+                        </div>
+                        <div class="error-message" id="nombreError"></div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="telefono">
+                                <i class="fas fa-phone"></i>
+                                Teléfono <span class="required">*</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-mobile-alt input-icon"></i>
+                                <input type="tel" id="telefono" name="telefono" class="form-input" placeholder="10 dígitos" inputmode="numeric" required>
+                            </div>
+                            <div class="error-message" id="telefonoError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="correo">
+                                <i class="fas fa-envelope"></i>
+                                Correo electrónico
+                                <span class="optional">(Opcional)</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-at input-icon"></i>
+                                <input type="email" id="correo" name="correo" class="form-input" placeholder="ejemplo@correo.com">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="cedula">
+                            <i class="fas fa-id-card"></i>
+                            Cédula Profesional <span class="required">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-hashtag input-icon"></i>
+                            <input type="text" id="cedula" name="cedula" class="form-input" placeholder="Número de cédula profesional" required>
+                        </div>
+                        <div class="error-message" id="cedulaError"></div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="password">
+                                <i class="fas fa-lock"></i>
+                                Contraseña <span class="required">*</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-key input-icon"></i>
+                                <input type="password" id="password" name="password" class="form-input" placeholder="Mínimo 8 caracteres" required>
+                                <button type="button" class="password-toggle" data-target="password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="error-message" id="passwordError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="confirmPassword">
+                                <i class="fas fa-check-circle"></i>
+                                Confirmar <span class="required">*</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-key input-icon"></i>
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" placeholder="Repite la contraseña" required>
+                                <button type="button" class="password-toggle" data-target="confirmPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="error-message" id="confirmPasswordError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="acceptTerms" required>
+                        <label for="acceptTerms">
+                            He leído y acepto los <a href="terminos.html" target="_blank">Términos y Condiciones</a> y la 
+                            <a href="privacidad.html" target="_blank">Política de Privacidad</a> de PIXCAPP.
+                        </label>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="fas fa-paper-plane"></i>
+                            Solicitar Registro
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="login-link">
+                    <p>¿Ya tienes una cuenta? <a href="login.html">Iniciar Sesión</a></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel Derecho -->
+        <div class="hero-panel">
+            <div class="hero-content">
+                <h2 class="hero-title">Asesora a productores con PIXCAPP</h2>
+                <p class="hero-text">Como ingeniero agrónomo podrás:</p>
+                <ul class="hero-features">
+                    <li><i class="fas fa-check-circle"></i><span>Monitorear múltiples productores</span></li>
+                    <li><i class="fas fa-check-circle"></i><span>Recibir alertas de plagas en tiempo real</span></li>
+                    <li><i class="fas fa-check-circle"></i><span>Enviar recomendaciones técnicas</span></li>
+                    <li><i class="fas fa-check-circle"></i><span>Generar reportes consolidados</span></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // ============================================
+        // TEMA GLOBAL
+        // ============================================
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+        })();
+        
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') {
+                document.body.setAttribute('data-theme', e.newValue || 'light');
+            }
+        });
+        
+        // ============================================
+        // PASSWORD TOGGLE
+        // ============================================
+        document.querySelectorAll('.password-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.dataset.target;
+                const input = document.getElementById(targetId);
+                const icon = btn.querySelector('i');
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                icon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+            });
+        });
+        
+        // ============================================
+        // FORMATO TELEFONO Y CÉDULA
+        // ============================================
+        document.getElementById('telefono').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+        });
+        
+        document.getElementById('cedula').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+        
+        // ============================================
+        // FOTO DE PERFIL
+        // ============================================
+        const fotoPerfil = document.getElementById('fotoPerfil');
+        const photoPreview = document.getElementById('photoPreview');
+        const removePhoto = document.getElementById('removePhoto');
+        let fotoBase64 = null;
+        
+        fotoPerfil.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    photoPreview.innerHTML = `<img src="${event.target.result}" alt="Foto">`;
+                    fotoBase64 = event.target.result;
+                    removePhoto.style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        removePhoto.addEventListener('click', () => {
+            fotoPerfil.value = '';
+            photoPreview.innerHTML = '<i class="fas fa-user-tie"></i>';
+            fotoBase64 = null;
+            removePhoto.style.display = 'none';
+        });
+        
+        // ============================================
+        // ALERTAS
+        // ============================================
+        function showAlert(message, type = 'error') {
+            const container = document.getElementById('alertContainer');
+            const icon = type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle';
+            container.innerHTML = `
+                <div class="alert alert-${type}">
+                    <i class="fas ${icon}"></i>
+                    <span>${message}</span>
+                </div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+        
+        // ============================================
+        // VALIDACIÓN
+        // ============================================
+        function validateForm() {
+            let isValid = true;
+            const nombre = document.getElementById('nombre').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const cedula = document.getElementById('cedula').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!nombre) { document.getElementById('nombreError').textContent = 'El nombre es requerido'; isValid = false; }
+            else document.getElementById('nombreError').textContent = '';
+            
+            if (!telefono || telefono.length !== 10) { document.getElementById('telefonoError').textContent = 'Teléfono debe tener 10 dígitos'; isValid = false; }
+            else document.getElementById('telefonoError').textContent = '';
+            
+            if (!cedula) { document.getElementById('cedulaError').textContent = 'La cédula profesional es requerida'; isValid = false; }
+            else if (cedula.length < 5) { document.getElementById('cedulaError').textContent = 'Número de cédula inválido'; isValid = false; }
+            else document.getElementById('cedulaError').textContent = '';
+            
+            if (!password || password.length < 8) { document.getElementById('passwordError').textContent = 'Mínimo 8 caracteres'; isValid = false; }
+            else document.getElementById('passwordError').textContent = '';
+            
+            if (password !== confirmPassword) { document.getElementById('confirmPasswordError').textContent = 'Las contraseñas no coinciden'; isValid = false; }
+            else document.getElementById('confirmPasswordError').textContent = '';
+            
+            if (!document.getElementById('acceptTerms').checked) { showAlert('Debes aceptar los Términos y Condiciones'); isValid = false; }
+            
+            return isValid;
+        }
+        
+        // ============================================
+        // SUBMIT
+        // ============================================
+        const registerForm = document.getElementById('registerForm');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!validateForm()) return;
+            
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner"></span> Enviando solicitud...';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch('api/auth/registro-ingeniero.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nombre: document.getElementById('nombre').value.trim(),
+                        telefono: document.getElementById('telefono').value.trim(),
+                        correo: document.getElementById('correo').value.trim() || null,
+                        cedula: document.getElementById('cedula').value.trim(),
+                        password: document.getElementById('password').value,
+                        foto_perfil: fotoBase64
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    localStorage.setItem('pixcapp_pending_ingeniero', JSON.stringify({
+                        nombre: document.getElementById('nombre').value.trim(),
+                        correo: document.getElementById('correo').value.trim()
+                    }));
+                    window.location.href = 'registro-pendiente.html';
+                } else {
+                    showAlert(data.message || 'Error al enviar la solicitud');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                showAlert('Error de conexión. Intenta nuevamente.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

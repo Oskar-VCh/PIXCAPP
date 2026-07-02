@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>Iniciar Sesión - PIXCAPP</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           PIXCAPP - LOGIN STYLES (FULLSCREEN)
+           ============================================ */
+        
+        :root {
+            --color-primary: #2E7D32;
+            --color-primary-light: #4CAF50;
+            --color-primary-dark: #1B5E20;
+            --color-background: #F5F7FA;
+            --color-surface: #FFFFFF;
+            --color-text-primary: #1A202C;
+            --color-text-secondary: #2D3748;
+            --color-text-muted: #4A5568;
+            --color-border: #E2E8F0;
+            --color-error: #E53E3E;
+            --color-success: #276749;
+            --hero-overlay: rgba(0, 0, 0, 0.5);
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+            
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+            
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+        }
+        
+        [data-theme="dark"] {
+            --color-primary: #66BB6A;
+            --color-primary-light: #81C784;
+            --color-primary-dark: #388E3C;
+            --color-background: #0F172A;
+            --color-surface: #1E293B;
+            --color-text-primary: #F8FAFC;
+            --color-text-secondary: #E2E8F0;
+            --color-text-muted: #CBD5E1;
+            --color-border: #334155;
+            --hero-overlay: rgba(0, 0, 0, 0.7);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            color: var(--color-text-primary);
+            background-color: var(--color-background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color var(--transition-base), color var(--transition-base);
+        }
+        
+        /* Header */
+        .header {
+            background-color: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            box-shadow: var(--shadow-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .logo-img {
+            height: 40px;
+            width: auto;
+        }
+
+        .logo-icon {
+            transition: filter 0.3s ease;
+        }
+
+        body:not([data-theme="dark"]) .logo-icon {
+            filter: brightness(0) invert(0);
+        }
+
+        [data-theme="dark"] .logo-icon {
+            filter: brightness(0) invert(1);
+        }
+        
+        .logo-text {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+        
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-text-secondary);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+        
+        .back-link:hover {
+            color: var(--color-primary);
+        }
+        
+        /* Main - FULLSCREEN LAYOUT */
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            min-height: calc(100vh - 73px);
+        }
+        
+        /* Panel Izquierdo - Formulario */
+        .login-panel {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-2xl);
+            background-color: var(--color-surface);
+        }
+        
+        .login-content {
+            width: 100%;
+            max-width: 480px;
+        }
+        
+        .login-header {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .login-title {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .login-title i {
+            color: var(--color-primary);
+            font-size: var(--font-size-3xl);
+        }
+        
+        .login-subtitle {
+            color: var(--color-text-muted);
+            font-size: var(--font-size-base);
+        }
+        
+        /* Form */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+        
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+        }
+        
+        .form-label i {
+            color: var(--color-primary);
+            width: 16px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: var(--spacing-md);
+            color: var(--color-text-muted);
+            font-size: 1rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem var(--spacing-md) 0.875rem 2.75rem;
+            font-size: var(--font-size-base);
+            font-family: var(--font-family);
+            color: var(--color-text-primary);
+            background-color: var(--color-background);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+        
+        .form-input::placeholder {
+            color: var(--color-text-muted);
+            opacity: 0.7;
+        }
+        
+        .form-input.error {
+            border-color: var(--color-error);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: var(--spacing-md);
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            font-size: 1rem;
+            transition: color var(--transition-fast);
+        }
+        
+        .password-toggle:hover {
+            color: var(--color-primary);
+        }
+        
+        .error-message {
+            color: var(--color-error);
+            font-size: var(--font-size-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-xs);
+        }
+        
+        /* Form Options */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            cursor: pointer;
+        }
+        
+        .form-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--color-primary);
+            cursor: pointer;
+        }
+        
+        .form-checkbox label {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+        }
+        
+        .forgot-link {
+            color: var(--color-primary);
+            font-size: var(--font-size-sm);
+            font-weight:500;
+            text-decoration: none;
+        }
+        
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Botones */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: 0.875rem 1.5rem;
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            line-height: 1.5;
+            text-align: center;
+            border: 2px solid transparent;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white !important;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Alert */
+        .alert {
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--font-size-sm);
+        }
+        
+        .alert-error {
+            background-color: rgba(229, 62, 62, 0.1);
+            border: 1px solid var(--color-error);
+            color: var(--color-error);
+        }
+        
+        .alert-success {
+            background-color: rgba(39, 103, 73, 0.1);
+            border: 1px solid var(--color-success);
+            color: var(--color-success);
+        }
+        
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--color-text-muted);
+            font-size: var(--font-size-sm);
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .divider span {
+            padding: 0 var(--spacing-md);
+        }
+        
+        /* Register Links */
+        .register-links {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .register-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            background-color: var(--color-background);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            font-weight: 500;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+        
+        .register-btn:hover {
+            border-color: var(--color-primary);
+            background-color: var(--color-surface);
+            color: var(--color-primary);
+            transform: translateY(-2px);
+        }
+        
+        .register-btn i {
+            color: var(--color-primary);
+            font-size: 1.5rem;
+            width: 32px;
+            text-align: center;
+        }
+        
+        .register-btn .arrow {
+            margin-left: auto;
+            opacity: 0.6;
+        }
+        
+        /* Panel Derecho - Imagen Hero */
+        .hero-panel {
+            flex: 1;
+            position: relative;
+            background-image: url('assets/img/hero-bg.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-3xl);
+        }
+        
+        .hero-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+            opacity: 0.5;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            color: white;
+            max-width: 500px;
+        }
+        
+        .hero-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .hero-title {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: white;
+        }
+        
+        .hero-text {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-xl);
+            opacity: 0.95;
+            line-height: 1.7;
+        }
+        
+        .hero-features {
+            list-style: none;
+        }
+        
+        .hero-features li {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-base);
+        }
+        
+        .hero-features li i {
+            color: white;
+            font-size: 1.25rem;
+            width: 24px;
+        }
+        
+        /* Spinner */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: var(--spacing-lg);
+            color: var(--color-text-muted);
+            font-size: var(--font-size-sm);
+            border-top: 1px solid var(--color-border);
+            background-color: var(--color-surface);
+        }
+        
+        .footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Mobile - Ocultar panel hero */
+        @media (max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+            
+            .login-panel {
+                padding: var(--spacing-xl);
+                flex: 1;
+            }
+            
+            .hero-panel {
+                display: none;
+            }
+            
+            .header-content {
+                padding: 0;
+            }
+            
+            .logo-text {
+                font-size: var(--font-size-lg);
+            }
+            
+            .logo-img {
+                height: 32px;
+            }
+            
+            .back-link span {
+                display: none;
+            }
+            
+            .login-title {
+                font-size: var(--font-size-2xl);
+            }
+        }
+        
+        /* Desktop - Mostrar panel hero */
+        @media (min-width: 769px) {
+            .login-content {
+                max-width: 480px;
+            }
+            
+            .hero-panel {
+                display: flex;
+            }
+        }
+        
+        :focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="assets/img/logo.png" alt="PIXCAPP Logo" class="logo-img logo-icon">
+                <span class="logo-text">PIXCAPP</span>
+            </div>
+            
+            <div class="header-actions">
+                <a href="index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver al inicio</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content - Fullscreen Layout -->
+    <main class="main">
+        <!-- Panel Izquierdo - Formulario -->
+        <div class="login-panel">
+            <div class="login-content">
+                <div class="login-header">
+                    <h1 class="login-title">
+                        Iniciar Sesión
+                    </h1>
+                    <p class="login-subtitle">Accede a tu cuenta para gestionar tus cultivos</p>
+                </div>
+                
+                <!-- Alert Container -->
+                <div id="alertContainer"></div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label class="form-label" for="telefono">
+                            <i class="fas fa-phone"></i>
+                            Teléfono
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-mobile-alt input-icon"></i>
+                            <input 
+                                type="tel" 
+                                id="telefono" 
+                                name="telefono" 
+                                class="form-input" 
+                                placeholder="10 dígitos"
+                                inputmode="numeric"
+                                autocomplete="tel"
+                                required
+                            >
+                        </div>
+                        <div class="error-message" id="telefonoError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="password">
+                            <i class="fas fa-lock"></i>
+                            Contraseña
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-key input-icon"></i>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                class="form-input" 
+                                placeholder="••••••••"
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button type="button" class="password-toggle" id="togglePassword" aria-label="Mostrar contraseña">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="passwordError"></div>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="form-checkbox">
+                            <input type="checkbox" id="rememberMe" checked>
+                            <span>Recordar este dispositivo</span>
+                        </label>
+                        
+                        <a href="recuperar-password.html" class="forgot-link">
+                            <i class="fas fa-question-circle"></i> ¿Olvidaste tu contraseña?
+                        </a>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Iniciar Sesión
+                    </button>
+                </form>
+                
+                <div class="divider">
+                    <span>¿No tienes cuenta?</span>
+                </div>
+                
+                <div class="register-links">
+                    <a href="registro-agricultor.html" class="register-btn">
+                        <i class="fas fa-tractor"></i>
+                        <span>Registrarme como Agricultor</span>
+                        <i class="fas fa-arrow-right arrow"></i>
+                    </a>
+                    
+                    <a href="registro-ingeniero.html" class="register-btn">
+                        <i class="fas fa-flask"></i>
+                        <span>Registrarme como Ingeniero</span>
+                        <i class="fas fa-arrow-right arrow"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel Derecho - Imagen Hero (SOLO DESKTOP) -->
+        <div class="hero-panel">
+            <div class="hero-content">
+                <h2 class="hero-title">Tu cultivo en buenas manos</h2>
+                <p class="hero-text">
+                    PIXCAPP te ayuda a gestionar tus parcelas, registrar eventos y 
+                    conectarte con ingenieros agrónomos para maximizar tu producción.
+                </p>
+                <ul class="hero-features">
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Registra sin conexión a internet</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Monitorea el crecimiento con gráficos</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Recibe asesoría de expertos</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // ============================================
+        // TEMA GLOBAL - Se aplica desde localStorage
+        // ============================================
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+        })();
+        
+        // Escuchar cambios de tema desde otras pestañas
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') {
+                document.body.setAttribute('data-theme', e.newValue || 'light');
+            }
+        });
+        
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = togglePassword.querySelector('i');
+        
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            toggleIcon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+        });
+        
+        // Formatear teléfono
+        const telefonoInput = document.getElementById('telefono');
+        telefonoInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+            e.target.value = value;
+            
+            document.getElementById('telefonoError').textContent = '';
+            telefonoInput.classList.remove('error');
+        });
+        
+        passwordInput.addEventListener('input', () => {
+            document.getElementById('passwordError').textContent = '';
+            passwordInput.classList.remove('error');
+        });
+        
+        // Mostrar alerta
+        function showAlert(message, type = 'error') {
+            const container = document.getElementById('alertContainer');
+            const icon = type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle';
+            
+            container.innerHTML = `
+                <div class="alert alert-${type}">
+                    <i class="fas ${icon}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+        
+        // Validaciones
+        function validateForm(telefono, password) {
+            let isValid = true;
+            
+            if (!telefono || telefono.length !== 10) {
+                document.getElementById('telefonoError').textContent = 'El teléfono debe tener 10 dígitos';
+                document.getElementById('telefono').classList.add('error');
+                isValid = false;
+            }
+            
+            if (!password || password.length < 6) {
+                document.getElementById('passwordError').textContent = 'La contraseña debe tener al menos 6 caracteres';
+                document.getElementById('password').classList.add('error');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        // Login form submit
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const telefono = document.getElementById('telefono').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            document.getElementById('telefonoError').textContent = '';
+            document.getElementById('passwordError').textContent = '';
+            document.getElementById('telefono').classList.remove('error');
+            document.getElementById('password').classList.remove('error');
+            
+            if (!validateForm(telefono, password)) {
+                return;
+            }
+            
+            const originalText = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<span class="spinner"></span> Verificando...';
+            loginBtn.disabled = true;
+            
+            try {
+                const response = await fetch('api/auth/login.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telefono, password, remember: rememberMe })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.setItem('pixcapp_token', data.token);
+                    localStorage.setItem('pixcapp_user', JSON.stringify(data.user));
+                    
+                    if (rememberMe) {
+                        localStorage.setItem('pixcapp_remember', telefono);
+                    }
+                    
+                    setTimeout(() => {
+                        if (data.user.rol === 'agricultor') {
+                            window.location.href = 'app/agricultor/dashboard.html';
+                        } else if (data.user.rol === 'ingeniero') {
+                            window.location.href = 'app/ingeniero/dashboard.html';
+                        } else if (data.user.rol === 'admin') {
+                            window.location.href = 'app/admin/dashboard.html';
+                        }
+                    }, 500);
+                } else {
+                    showAlert(data.message || 'Error al iniciar sesión');
+                    loginBtn.innerHTML = originalText;
+                    loginBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión. Intenta nuevamente.');
+                loginBtn.innerHTML = originalText;
+                loginBtn.disabled = false;
+            }
+        });
+        
+        // Auto-completar teléfono
+        const savedPhone = localStorage.getItem('pixcapp_remember');
+        if (savedPhone) {
+            document.getElementById('telefono').value = savedPhone;
+        }
+        
+        // Verificar sesión activa
+        const token = localStorage.getItem('pixcapp_token');
+        const user = JSON.parse(localStorage.getItem('pixcapp_user') || '{}');
+        
+        if (token && user.rol) {
+            fetch('api/auth/verify.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.valid) {
+                    if (user.rol === 'agricultor') {
+                        window.location.href = 'app/agricultor/dashboard.html';
+                    } else if (user.rol === 'ingeniero') {
+                        window.location.href = 'app/ingeniero/dashboard.html';
+                    } else if (user.rol === 'admin') {
+                        window.location.href = 'app/admin/dashboard.html';
+                    }
+                } else {
+                    localStorage.removeItem('pixcapp_token');
+                    localStorage.removeItem('pixcapp_user');
+                }
+            })
+            .catch(() => {
+                localStorage.removeItem('pixcapp_token');
+                localStorage.removeItem('pixcapp_user');
+            });
+        }
+    </script>
+</body>
+</html>

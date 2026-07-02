@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>PIXCAPP - Agricultura Inteligente</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Manifest PWA -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           PIXCAPP - ESTILOS PRINCIPALES (INLINE)
+           ============================================ */
+        
+        /* Variables y Reset */
+        :root {
+            /* Colores Tema Claro - MEJORADO PARA CONTRASTE */
+            --color-primary: #2E7D32;
+            --color-primary-light: #4CAF50;
+            --color-primary-dark: #1B5E20;
+            --color-secondary: #4CAF50;
+            --color-background: #F5F7FA;
+            --color-surface: #FFFFFF;
+            --color-text-primary: #1A202C;
+            --color-text-secondary: #2D3748;
+            --color-text-muted: #4A5568;
+            --color-border: #E2E8F0;
+            --color-error: #E53E3E;
+            --color-warning: #C05621;
+            --color-success: #276749;
+            --color-info: #2B6CB0;
+            
+            /* Hero overlay - fondo semitransparente para mejor legibilidad */
+            --hero-overlay: rgba(0, 0, 0, 0.5);
+            
+            /* Sombras */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            /* Espaciado */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+            
+            /* Bordes */
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+            
+            /* Tipografía */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            --font-size-5xl: 3rem;
+            
+            /* Transiciones */
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
+            
+            /* Container */
+            --container-max: 1200px;
+            --container-padding: 1.5rem;
+        }
+        
+        /* Tema Oscuro - MEJORADO PARA CONTRASTE */
+        [data-theme="dark"] {
+            --color-primary: #66BB6A;
+            --color-primary-light: #81C784;
+            --color-primary-dark: #388E3C;
+            --color-background: #0F172A;
+            --color-surface: #1E293B;
+            --color-text-primary: #F8FAFC;
+            --color-text-secondary: #E2E8F0;
+            --color-text-muted: #CBD5E1;
+            --color-border: #334155;
+            --hero-overlay: rgba(0, 0, 0, 0.7);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Reset CSS */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            color: var(--color-text-primary);
+            background-color: var(--color-background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color var(--transition-base), color var(--transition-base);
+        }
+        
+        /* Tipografía */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text-primary);
+        }
+        
+        h1 { font-size: var(--font-size-5xl); }
+        h2 { font-size: var(--font-size-4xl); }
+        h3 { font-size: var(--font-size-2xl); }
+        h4 { font-size: var(--font-size-xl); }
+        
+        p {
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text-secondary);
+        }
+        
+        a {
+            color: var(--color-primary);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+        
+        a:hover {
+            color: var(--color-primary-dark);
+        }
+        
+        /* Container */
+        .container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+        }
+        
+        /* Botones */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: 0.75rem 1.5rem;
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            line-height: 1.5;
+            text-align: center;
+            border: 2px solid transparent;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+        }
+        
+        .btn i {
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white !important;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark);
+            color: var(--color-primary) !important;
+            border-color: var(--color-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--color-primary) !important;
+            border-color: var(--color-primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--color-primary);
+            color: white !important;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--color-text-primary) !important;
+            border-color: var(--color-border);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--color-surface);
+            border-color: var(--color-primary);
+            color: var(--color-primary) !important;
+        }
+        
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: var(--font-size-lg);
+        }
+        
+        .btn-large i {
+            font-size: 1.25rem;
+        }
+        
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            box-shadow: var(--shadow-sm);
+            transition: background-color var(--transition-base);
+        }
+        
+        .header-container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: var(--spacing-md) var(--container-padding);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .logo-img {
+            height: 40px;
+            width: auto;
+            transition: filter 0.3s ease;
+        }
+        
+        /* Modo claro - Logo negro */
+        body:not([data-theme="dark"]) .logo-icon {
+            filter: brightness(0) invert(0);
+        }
+        
+        /* Modo oscuro - Logo blanco */
+        [data-theme="dark"] .logo-icon {
+            filter: brightness(0) invert(1);
+        }
+
+        .logo-icon {
+            transition: filter 0.3s ease;
+        }
+        
+        .logo-text {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+        
+        /* Navegación Desktop */
+        .nav-desktop {
+            display: flex;
+            gap: var(--spacing-xl);
+        }
+        
+        .nav-desktop a {
+            color: var(--color-text-secondary);
+            font-weight: 600;
+            padding: var(--spacing-xs) 0;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .nav-desktop a:hover {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+        
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-full);
+            transition: background-color var(--transition-fast);
+        }
+        
+        .theme-toggle:hover {
+            background-color: var(--color-background);
+            color: var(--color-primary);
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--color-text-primary);
+            cursor: pointer;
+            padding: var(--spacing-sm);
+        }
+        
+        /* Menú Mobile */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 320px;
+            height: 100vh;
+            background-color: var(--color-surface);
+            box-shadow: var(--shadow-xl);
+            z-index: 1000;
+            transition: right var(--transition-base);
+            overflow-y: auto;
+        }
+        
+        .mobile-menu.active {
+            right: 0;
+        }
+        
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .close-menu {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--color-text-primary);
+            cursor: pointer;
+            padding: var(--spacing-sm);
+        }
+        
+        .nav-mobile {
+            display: flex;
+            flex-direction: column;
+            padding: var(--spacing-lg);
+            gap: var(--spacing-md);
+        }
+        
+        .nav-mobile a {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            color: var(--color-text-primary);
+            font-size: var(--font-size-lg);
+            border-radius: var(--radius-md);
+            transition: background-color var(--transition-fast);
+        }
+        
+        .nav-mobile a:hover {
+            background-color: var(--color-background);
+            color: var(--color-primary);
+        }
+        
+        .nav-mobile .btn {
+            justify-content: center;
+            margin-top: var(--spacing-sm);
+        }
+        
+        /* Hero Section - CON IMAGEN DE FONDO Y OVERLAY */
+        .hero {
+            position: relative;
+            padding: var(--spacing-3xl) 0;
+            background-image: url('assets/img/hero-bg.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            height: 90vh;
+        }
+        
+        /* Fallback si no hay imagen */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+            opacity: 0.5;
+            z-index: 1;
+        }
+        
+        /* Overlay semitransparente para mejor legibilidad */
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--hero-overlay);
+            z-index: 2;
+        }
+        
+        .hero-container {
+            position: relative;
+            z-index: 3;
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+        }
+        
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero-title {
+            font-size: var(--font-size-5xl);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-md);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-icon {
+            font-size: 3.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: var(--font-size-2xl);
+            margin-bottom: var(--spacing-xl);
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-features {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-2xl);
+            font-size: var(--font-size-lg);
+            color: white;
+        }
+        
+        .hero-features span {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-features .separator {
+            opacity: 0.7;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: var(--spacing-lg);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .hero-cta .btn {
+            min-width: 280px;
+        }
+        
+        .hero-cta .btn-primary {
+            background-color: white;
+            color: var(--color-primary-dark) !important;
+        }
+        
+        .hero-cta .btn-primary:hover {
+            background-color: var(--color-background);
+        }
+        
+        .hero-cta .btn-secondary {
+            background-color: transparent;
+            color: white !important;
+            border-color: white;
+        }
+        
+        .hero-cta .btn-secondary:hover {
+            background-color: white;
+            color: var(--color-primary-dark) !important;
+        }
+        
+        .hero-login-link {
+            font-size: var(--font-size-lg);
+            color: white;
+        }
+        
+        .hero-login-link a {
+            color: white;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: var(--spacing-3xl) 0;
+            background-color: var(--color-surface);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-md);
+            color: var(--color-text-primary);
+        }
+        
+        .section-title i {
+            color: var(--color-primary);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+        }
+        
+        .feature-card {
+            padding: var(--spacing-xl);
+            background-color: var(--color-background);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            transition: transform var(--transition-base), box-shadow var(--transition-base);
+            border: 1px solid var(--color-border);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto var(--spacing-lg);
+            background-color: var(--color-primary);
+            color: white;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text-primary);
+        }
+        
+        .feature-card p {
+            color: var(--color-text-secondary);
+            margin-bottom: 0;
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            padding: var(--spacing-3xl) 0;
+            background-color: var(--color-background);
+        }
+        
+        .steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-xl);
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+        
+        .step-number {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto var(--spacing-md);
+            background-color: var(--color-primary);
+            color: white;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+        }
+        
+        .step-icon {
+            font-size: 2rem;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .step-content h3 {
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text-primary);
+        }
+        
+        .step-content p {
+            color: var(--color-text-secondary);
+        }
+        
+        .step-arrow {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            opacity: 0.7;
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: var(--spacing-3xl) 0;
+            background-color: var(--color-surface);
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .testimonial-card {
+            padding: var(--spacing-xl);
+            background-color: var(--color-background);
+            border-radius: var(--radius-lg);
+            position: relative;
+            border: 1px solid var(--color-border);
+        }
+        
+        .testimonial-quote {
+            position: absolute;
+            top: var(--spacing-md);
+            left: var(--spacing-md);
+            font-size: 2rem;
+            color: var(--color-primary);
+            opacity: 0.15;
+        }
+        
+        .testimonial-text {
+            font-size: var(--font-size-lg);
+            font-style: italic;
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+            z-index: 1;
+            color: var(--color-text-primary);
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .testimonial-author i {
+            font-size: 2.5rem;
+            color: var(--color-text-muted);
+        }
+        
+        .author-name {
+            font-weight: 700;
+            display: block;
+            color: var(--color-text-primary);
+        }
+        
+        .author-role {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-muted);
+        }
+        
+        /* CTA Final */
+        .cta-final {
+            padding: var(--spacing-3xl) 0;
+            background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .cta-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-lg);
+            color: white;
+        }
+        
+        .cta-final h2 {
+            margin-bottom: var(--spacing-md);
+            color: white;
+        }
+        
+        .cta-final p {
+            margin-bottom: var(--spacing-xl);
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .cta-final .btn-primary {
+            background-color: white;
+            color: var(--color-primary-dark) !important;
+        }
+        
+        .cta-final .btn-primary:hover {
+            background-color: var(--color-background);
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: var(--color-surface);
+            padding: var(--spacing-2xl) 0 var(--spacing-lg);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .footer-col h4 {
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-text-primary);
+        }
+        
+        .footer-col a,
+        .footer-col p {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-sm);
+            transition: color var(--transition-fast);
+        }
+        
+        .footer-col a:hover {
+            color: var(--color-primary);
+        }
+        
+        .footer-col i {
+            width: 20px;
+            color: var(--color-primary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background-color: var(--color-background);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+        }
+        
+        .social-links a:hover {
+            background-color: var(--color-primary);
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: var(--spacing-xl);
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-muted);
+        }
+        
+        .footer-bottom i {
+            color: var(--color-error);
+        }
+        
+        /* Utilidades */
+        .text-center { text-align: center; }
+        .hidden { display: none !important; }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn var(--transition-slow) forwards;
+        }
+        
+        /* Accesibilidad */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+        
+        :focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+        
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--color-background);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-text-muted);
+            border-radius: var(--radius-full);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-text-secondary);
+        }
+        
+        /* ============================================
+           ESTILOS MOBILE (max-width: 768px)
+           ============================================ */
+        @media (max-width: 768px) {
+            :root {
+                --font-size-5xl: 2.25rem;
+                --font-size-4xl: 1.875rem;
+                --font-size-3xl: 1.5rem;
+                --font-size-2xl: 1.25rem;
+                --container-padding: 1rem;
+            }
+            
+            .header-container {
+                padding: var(--spacing-sm) var(--container-padding);
+            }
+            
+            .logo-text {
+                font-size: var(--font-size-lg);
+            }
+            
+            .logo-img {
+                height: 32px;
+            }
+            
+            .nav-desktop {
+                display: none;
+            }
+            
+            .header-actions .btn {
+                display: none;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .hero {
+                padding: var(--spacing-xl) 0;
+            }
+            
+            .hero-title {
+                font-size: var(--font-size-4xl);
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+            
+            .hero-icon {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: var(--font-size-lg);
+            }
+            
+            .hero-features {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+            
+            .hero-features .separator {
+                display: none;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
+            
+            .hero-cta .btn {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .features {
+                padding: var(--spacing-xl) 0;
+            }
+            
+            .section-title {
+                font-size: var(--font-size-3xl);
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+            
+            .feature-card {
+                padding: var(--spacing-lg);
+            }
+            
+            .how-it-works {
+                padding: var(--spacing-xl) 0;
+            }
+            
+            .steps {
+                flex-direction: column;
+                gap: var(--spacing-lg);
+            }
+            
+            .step {
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .step-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .testimonials {
+                padding: var(--spacing-xl) 0;
+            }
+            
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+            
+            .testimonial-card {
+                padding: var(--spacing-lg);
+            }
+            
+            .testimonial-text {
+                font-size: var(--font-size-base);
+            }
+            
+            .cta-final {
+                padding: var(--spacing-xl) 0;
+            }
+            
+            .cta-final h2 {
+                font-size: var(--font-size-2xl);
+            }
+            
+            .footer {
+                padding: var(--spacing-xl) 0 var(--spacing-md);
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+                text-align: center;
+            }
+            
+            .footer-col a,
+            .footer-col p {
+                justify-content: center;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+            
+            .btn {
+                padding: 0.75rem 1rem;
+            }
+            
+            .btn-large {
+                padding: 0.875rem 1.5rem;
+            }
+        }
+        
+        /* ============================================
+           ESTILOS DESKTOP (min-width: 769px)
+           ============================================ */
+        @media (min-width: 769px) {
+            .mobile-menu {
+                display: none;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .steps {
+                gap: var(--spacing-2xl);
+            }
+            
+            .step {
+                max-width: 300px;
+            }
+            
+            .testimonials-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-grid {
+                grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            }
+            
+            .feature-card:hover {
+                transform: translateY(-8px);
+                box-shadow: var(--shadow-xl);
+            }
+            
+            .testimonial-card:hover {
+                transform: scale(1.02);
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            :root {
+                --container-max: 1200px;
+            }
+        }
+        
+        @media (min-width: 1440px) {
+            :root {
+                --container-max: 1320px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <!-- Logo PNG - Cambia automáticamente entre negro (modo claro) y blanco (modo oscuro) -->
+                <img src="assets/img/logo.png" alt="PIXCAPP Logo" class="logo-img logo-icon">
+                <span class="logo-text">PIXCAPP</span>
+            </div>
+            
+            <!-- Navegación desktop -->
+            <nav class="nav-desktop">
+                <a href="#inicio">Inicio</a>
+                <a href="#caracteristicas">Características</a>
+                <a href="#como-funciona">Cómo funciona</a>
+                <a href="#testimonios">Testimonios</a>
+                <a href="#contacto">Contacto</a>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="login.html" class="btn btn-outline">Iniciar Sesión</a>
+                <a href="registro-agricultor.html" class="btn btn-primary">Registrarse</a>
+                
+                <!-- Menú mobile -->
+                <button class="menu-toggle" id="menuToggle" aria-label="Menú">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Menú mobile overlay -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <span class="logo-text">
+                <i class="fas fa-seedling"></i> PIXCAPP
+            </span>
+            <button class="close-menu" id="closeMenu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="nav-mobile">
+            <a href="#inicio"><i class="fas fa-home"></i> Inicio</a>
+            <a href="#caracteristicas"><i class="fas fa-star"></i> Características</a>
+            <a href="#como-funciona"><i class="fas fa-diagram-project"></i> Cómo funciona</a>
+            <a href="#testimonios"><i class="fas fa-users"></i> Testimonios</a>
+            <a href="#contacto"><i class="fas fa-envelope"></i> Contacto</a>
+            <a href="login.html" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+            <a href="registro-agricultor.html" class="btn btn-outline"><i class="fas fa-user-plus"></i> Crear Cuenta</a>
+        </nav>
+    </div>
+    
+    <main>
+        <!-- Hero Section -->
+        <section id="inicio" class="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <img src="assets/img/logo.png" alt="PIXCAPP Logo" class="logo-icon" height="70px"> PIXCAPP
+                    </h1>
+                    <p class="hero-subtitle">Agricultura al alcance de todos los productores</p>
+                    
+                    <div class="hero-features">
+                        <span><i class=""></i> </span>
+                        <span class="separator">•</span>
+                        <span><i class="fas fa-camera"></i> Seguimiento visual</span>
+                        <span class="separator">•</span>
+                        <span><i class="fas fa-user-tie"></i> Asesoría experta</span>
+                    </div>
+                    
+                    <div class="hero-cta">
+                        <a href="registro-agricultor.html" class="btn btn-large btn-primary">
+                            <i class="fas fa-tractor"></i> Comenzar como Agricultor
+                        </a>
+                        <a href="registro-ingeniero.html" class="btn btn-large btn-secondary">
+                            <i class="fas fa-flask"></i> Comenzar como Ingeniero
+                        </a>
+                    </div>
+                    
+                    <p class="hero-login-link">
+                        ¿Ya tienes cuenta? <a href="login.html">Iniciar Sesión <i class="fas fa-arrow-right"></i></a>
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Características -->
+        <section id="caracteristicas" class="features">
+            <div class="container">
+                <h2 class="section-title">
+                    ¿Por qué elegir PIXCAPP?
+                </h2>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-wifi-slash"></i>
+                        </div>
+                        <h3>Offline First</h3>
+                        <p></p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Monitoreo Real</h3>
+                        <p>Gráficos de crecimiento y galería de fotos comparativas para seguir la evolución de tus cultivos.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3>Alertas Smart</h3>
+                        <p>Notificaciones locales y push para no perder ningún evento importante en tu producción.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h3>Geolocalización</h3>
+                        <p>Mapea tus parcelas y evita duplicados automáticamente con validación GPS.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3>Guía de Cultivos</h3>
+                        <p>Información técnica de plagas, manejo y ciclo de cultivos siempre disponible.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Datos Seguros</h3>
+                        <p>Tus datos se sincronizan de forma segura a la nube y solo tú decides quién puede verlos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Cómo funciona -->
+        <section id="como-funciona" class="how-it-works">
+            <div class="container">
+                <h2 class="section-title">
+                    Empieza en 3 simples pasos
+                </h2>
+                
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <i class="fas fa-user-plus step-icon"></i>
+                            <h3>Regístrate</h3>
+                            <p>Crea tu cuenta en 2 minutos. Sin correo obligatorio, solo necesitas tu teléfono.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <i class="fas fa-clipboard-list step-icon"></i>
+                            <h3>Registra tus eventos</h3>
+                            <p>Riego, plagas, fertilización y fotos. Todo sin necesidad de conexión a internet.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <i class="fas fa-cloud-upload-alt step-icon"></i>
+                            <h3>Sincroniza y monitorea</h3>
+                            <p>Con internet, tus datos suben automáticamente. Monitorea el crecimiento desde cualquier lugar.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Testimonios -->
+        <section id="testimonios" class="testimonials">
+            <div class="container">
+                <h2 class="section-title">
+                    Confían en PIXCAPP
+                </h2>
+                
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        <p class="testimonial-text">"Antes perdía el control de mis riegos. Ahora la app me avisa cuándo toca regar cada parcela."</p>
+                        <div class="testimonial-author">
+                            <i class="fas fa-user-circle"></i>
+                            <div>
+                                <span class="author-name">Don José</span>
+                                <span class="author-role">Productor de Maíz</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        <p class="testimonial-text">"Como ingeniero, PIXCAPP me permite monitorear 15 productores sin tener que visitarlos a diario."</p>
+                        <div class="testimonial-author">
+                            <i class="fas fa-user-tie"></i>
+                            <div>
+                                <span class="author-name">Ing. Martínez</span>
+                                <span class="author-role">Asesor Agrícola</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- CTA Final -->
+        <section class="cta-final">
+            <div class="container">
+                <img src="assets/img/logo.png" alt="PIXCAPP Logo" class="logo-icon" height="70px">
+                <h2>¿Listo para transformar tu producción?</h2>
+                <p>Sin tarjetas de crédito • Cancela cuando quieras</p>
+                <a href="registro-agricultor.html" class="btn btn-large btn-primary">
+                    Crear cuenta gratis <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer id="contacto" class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4><img src="assets/img/logo.png" alt="Logo PIXCAPP" class="logo-icon" height="30px" style="margin-bottom: -7px;"> PIXCAPP</h4>
+                    <p>Proyecto Integrador Escolar 2026</p>
+                    <p>v1.0 MVP</p>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Enlaces</h4>
+                    <a href="#inicio"><i class="fas fa-chevron-right"></i> Inicio</a>
+                    <a href="#caracteristicas"><i class="fas fa-chevron-right"></i> Características</a>
+                    <a href="#como-funciona"><i class="fas fa-chevron-right"></i> Cómo funciona</a>
+                    <a href="#contacto"><i class="fas fa-chevron-right"></i> Contacto</a>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="#"><i class="fas fa-file-contract"></i> Términos y Condiciones</a>
+                    <a href="#"><i class="fas fa-lock"></i> Política de Privacidad</a>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Contacto</h4>
+                    <p><i class="fas fa-envelope"></i> hola@pixcapp.com</p>
+                    <p><i class="fas fa-phone"></i> +52 123 456 7890</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2026 PIXCAPP - Todos los derechos reservados</p>
+                <p>Hecho para productores mexicanos</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Menú mobile toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeMenu = document.getElementById('closeMenu');
+        
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.add('active');
+            });
+        }
+        
+        if (closeMenu) {
+            closeMenu.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+            });
+        }
+        
+        // Cerrar menú al hacer clic en un enlace
+        document.querySelectorAll('.nav-mobile a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+            });
+        });
+        
+        // ============================================
+        // MANEJO DE TEMA GLOBAL
+        // ============================================
+
+        // Función para aplicar el tema
+        function applyTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            
+            // Actualizar icono del botón si existe en esta página
+            const themeIcon = document.getElementById('themeToggle')?.querySelector('i');
+            if (themeIcon) {
+                themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+
+        // Al cargar la página, aplicar el tema guardado
+        (function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+        })();
+
+        // Evento del botón de tema (solo existe en la landing page)
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                applyTheme(newTheme);
+            });
+        }
+
+        // Escuchar cambios en otras pestañas (opcional)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') {
+                applyTheme(e.newValue || 'light');
+            }
+        });
+        
+        // Smooth scroll para enlaces internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

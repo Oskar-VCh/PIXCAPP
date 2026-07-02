@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>Registro Agricultor - PIXCAPP</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Leaflet CSS para el mapa -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           PIXCAPP - REGISTRO AGRICULTOR STYLES
+           ============================================ */
+        
+        :root {
+            --color-primary: #2E7D32;
+            --color-primary-light: #4CAF50;
+            --color-primary-dark: #1B5E20;
+            --color-background: #F5F7FA;
+            --color-surface: #FFFFFF;
+            --color-text-primary: #1A202C;
+            --color-text-secondary: #2D3748;
+            --color-text-muted: #4A5568;
+            --color-border: #E2E8F0;
+            --color-error: #E53E3E;
+            --color-success: #276749;
+            --color-warning: #C05621;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+            
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+            
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+        }
+        
+        [data-theme="dark"] {
+            --color-primary: #66BB6A;
+            --color-primary-light: #81C784;
+            --color-primary-dark: #388E3C;
+            --color-background: #0F172A;
+            --color-surface: #1E293B;
+            --color-text-primary: #F8FAFC;
+            --color-text-secondary: #E2E8F0;
+            --color-text-muted: #CBD5E1;
+            --color-border: #334155;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            color: var(--color-text-primary);
+            background-color: var(--color-background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color var(--transition-base), color var(--transition-base);
+        }
+        
+        /* Header */
+        .header {
+            background-color: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            box-shadow: var(--shadow-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .logo-img {
+            height: 40px;
+            width: auto;
+        }
+
+        .logo-icon {
+            transition: filter 0.3s ease;
+        }
+
+        body:not([data-theme="dark"]) .logo-icon {
+            filter: brightness(0) invert(0);
+        }
+
+        [data-theme="dark"] .logo-icon {
+            filter: brightness(0) invert(1);
+        }
+        
+        .logo-text {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+        
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-text-secondary);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+        
+        .back-link:hover {
+            color: var(--color-primary);
+        }
+        
+        /* Main */
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            min-height: calc(100vh - 73px);
+        }
+        
+        /* Panel Izquierdo - Formulario */
+        .register-panel {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-2xl);
+            background-color: var(--color-surface);
+            overflow-y: auto;
+        }
+        
+        .register-content {
+            width: 100%;
+            max-width: 560px;
+        }
+        
+        .register-header {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .register-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .register-title i {
+            color: var(--color-primary);
+            font-size: var(--font-size-2xl);
+        }
+        
+        .register-subtitle {
+            color: var(--color-text-muted);
+            font-size: var(--font-size-sm);
+        }
+        
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background-color: var(--color-background);
+            border: 2px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+            transition: all var(--transition-fast);
+        }
+        
+        .step.active .step-icon {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+        
+        .step.completed .step-icon {
+            background-color: var(--color-success);
+            border-color: var(--color-success);
+            color: white;
+        }
+        
+        .step.completed .step-icon i {
+            display: block;
+        }
+        
+        .step.completed .step-icon span {
+            display: none;
+        }
+        
+        .step .step-icon i {
+            display: none;
+        }
+        
+        .step-label {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-muted);
+            font-weight: 500;
+        }
+        
+        .step.active .step-label {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+        
+        .step-line {
+            flex: 0.5;
+            height: 2px;
+            background-color: var(--color-border);
+            margin: 0 var(--spacing-sm);
+            margin-bottom: 28px;
+        }
+        
+        .step-line.completed {
+            background-color: var(--color-success);
+        }
+        
+        /* Form Steps */
+        .form-step {
+            display: none;
+        }
+        
+        .form-step.active {
+            display: block;
+        }
+        
+        /* Form */
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+        }
+        
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+        }
+        
+        .form-label i {
+            color: var(--color-primary);
+            width: 16px;
+        }
+        
+        .form-label .optional {
+            color: var(--color-text-muted);
+            font-weight: 400;
+            margin-left: auto;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: var(--spacing-md);
+            color: var(--color-text-muted);
+            font-size: 1rem;
+            z-index: 1;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem var(--spacing-md) 0.875rem 2.75rem;
+            font-size: var(--font-size-base);
+            font-family: var(--font-family);
+            color: var(--color-text-primary);
+            background-color: var(--color-background);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+        
+        .form-input::placeholder {
+            color: var(--color-text-muted);
+            opacity: 0.7;
+        }
+        
+        .form-input.error {
+            border-color: var(--color-error);
+        }
+        
+        .form-input:disabled {
+            background-color: var(--color-border);
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: var(--spacing-md);
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            font-size: 1rem;
+            transition: color var(--transition-fast);
+        }
+        
+        .password-toggle:hover {
+            color: var(--color-primary);
+        }
+        
+        .error-message {
+            color: var(--color-error);
+            font-size: var(--font-size-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-xs);
+        }
+        
+        /* Mapa */
+        .map-container {
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 2px solid var(--color-border);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        #map {
+            height: 200px;
+            width: 100%;
+        }
+        
+        .map-controls {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+        }
+        
+        .btn-map {
+            flex: 1;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background-color: var(--color-background);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .btn-map:hover {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+        
+        .coordinates-display {
+            display: flex;
+            gap: var(--spacing-md);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-muted);
+            margin-top: var(--spacing-sm);
+        }
+        
+        /* File Upload (Foto de perfil) */
+        .photo-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .photo-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: var(--radius-full);
+            background-color: var(--color-background);
+            border: 2px dashed var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .photo-preview:hover {
+            border-color: var(--color-primary);
+        }
+        
+        .photo-preview i {
+            font-size: 2.5rem;
+            color: var(--color-text-muted);
+        }
+        
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .photo-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        /* Warning Box */
+        .warning-box {
+            background-color: rgba(192, 86, 33, 0.1);
+            border: 1px solid var(--color-warning);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            display: flex;
+            gap: var(--spacing-md);
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .warning-box i {
+            color: var(--color-warning);
+            font-size: 1.25rem;
+        }
+        
+        .warning-box p {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+            margin: 0;
+        }
+        
+        /* Alert */
+        .alert {
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--font-size-sm);
+        }
+        
+        .alert-error {
+            background-color: rgba(229, 62, 62, 0.1);
+            border: 1px solid var(--color-error);
+            color: var(--color-error);
+        }
+        
+        .alert-success {
+            background-color: rgba(39, 103, 73, 0.1);
+            border: 1px solid var(--color-success);
+            color: var(--color-success);
+        }
+        
+        /* Botones */
+        .form-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: 0.875rem 1.5rem;
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            line-height: 1.5;
+            text-align: center;
+            border: 2px solid transparent;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white !important;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--color-text-primary);
+            border-color: var(--color-border);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--color-background);
+            border-color: var(--color-primary);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Terms */
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .terms-checkbox input {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--color-primary);
+            cursor: pointer;
+        }
+        
+        .terms-checkbox label {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+        }
+        
+        .terms-checkbox a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Login Link */
+        .login-link {
+            text-align: center;
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .login-link p {
+            color: var(--color-text-muted);
+            font-size: var(--font-size-sm);
+        }
+        
+        .login-link a {
+            color: var(--color-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Panel Derecho - Imagen Hero */
+        .hero-panel {
+            flex: 1;
+            position: relative;
+            background-image: url('assets/img/hero-bg.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-3xl);
+        }
+        
+        .hero-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+            opacity: 0.5;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            color: white;
+            max-width: 500px;
+        }
+        
+        .hero-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .hero-title {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: white;
+        }
+        
+        .hero-text {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-xl);
+            opacity: 0.95;
+            line-height: 1.7;
+        }
+        
+        .hero-features {
+            list-style: none;
+        }
+        
+        .hero-features li {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-base);
+        }
+        
+        .hero-features li i {
+            color: white;
+            font-size: 1.25rem;
+            width: 24px;
+        }
+        
+        /* Spinner */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: var(--spacing-lg);
+            color: var(--color-text-muted);
+            font-size: var(--font-size-sm);
+            border-top: 1px solid var(--color-border);
+            background-color: var(--color-surface);
+        }
+        
+        .footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+            
+            .register-panel {
+                padding: var(--spacing-lg);
+                flex: 1;
+            }
+            
+            .hero-panel {
+                display: none;
+            }
+            
+            .header-content {
+                padding: 0;
+            }
+            
+            .logo-text {
+                font-size: var(--font-size-lg);
+            }
+            
+            .logo-img {
+                height: 32px;
+            }
+            
+            .back-link span {
+                display: none;
+            }
+            
+            .register-title {
+                font-size: var(--font-size-xl);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .coordinates-display {
+                flex-direction: column;
+                gap: var(--spacing-xs);
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .register-content {
+                max-width: 560px;
+            }
+            
+            .hero-panel {
+                display: flex;
+            }
+        }
+        
+        :focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="assets/img/logo.png" alt="PIXCAPP Logo" class="logo-img logo-icon">
+                <span class="logo-text">PIXCAPP</span>
+            </div>
+            
+            <div class="header-actions">
+                <a href="index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver al inicio</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Panel Izquierdo - Formulario -->
+        <div class="register-panel">
+            <div class="register-content">
+                <div class="register-header">
+                    <h1 class="register-title">
+                        Registro de Agricultor
+                    </h1>
+                    <p class="register-subtitle">Crea tu cuenta gratuita y comienza a gestionar tus cultivos</p>
+                </div>
+                
+                <!-- Progress Steps -->
+                <div class="progress-steps">
+                    <div class="step active" id="step1Indicator">
+                        <div class="step-icon">
+                            <span>1</span>
+                            <i class="fas fa-check" style="display: none;"></i>
+                        </div>
+                        <span class="step-label">Cuenta</span>
+                    </div>
+                    <div class="step-line" id="line1"></div>
+                    <div class="step" id="step2Indicator">
+                        <div class="step-icon">
+                            <span>2</span>
+                            <i class="fas fa-check" style="display: none;"></i>
+                        </div>
+                        <span class="step-label">Parcela</span>
+                    </div>
+                    <div class="step-line" id="line2"></div>
+                    <div class="step" id="step3Indicator">
+                        <div class="step-icon">
+                            <span>3</span>
+                            <i class="fas fa-check" style="display: none;"></i>
+                        </div>
+                        <span class="step-label">Confirmar</span>
+                    </div>
+                </div>
+                
+                <!-- Alert Container -->
+                <div id="alertContainer"></div>
+                
+                <!-- Registration Form -->
+                <form id="registerForm">
+                    <div class="form-step active" id="step1">
+                        <div class="register-form">
+                            <div class="photo-upload">
+                                <div class="photo-preview" id="photoPreview" onclick="document.getElementById('fotoPerfil').click()">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <input type="file" id="fotoPerfil" accept="image/*" style="display: none;">
+                                <div class="photo-actions">
+                                    <button type="button" class="btn-map" onclick="document.getElementById('fotoPerfil').click()">
+                                        <i class="fas fa-camera"></i> Subir foto
+                                    </button>
+                                    <button type="button" class="btn-map" id="removePhoto" style="display: none;">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="nombre">
+                                    <i class="fas fa-user"></i>
+                                    Nombre completo *
+                                </label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-user-circle input-icon"></i>
+                                    <input type="text" id="nombre" name="nombre" class="form-input" placeholder="Ej: Juan Pérez López" required>
+                                </div>
+                                <div class="error-message" id="nombreError"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="telefono">
+                                    <i class="fas fa-phone"></i>
+                                    Teléfono *
+                                </label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-mobile-alt input-icon"></i>
+                                    <input type="tel" id="telefono" name="telefono" class="form-input" placeholder="10 dígitos" inputmode="numeric" required>
+                                </div>
+                                <div class="error-message" id="telefonoError"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="correo">
+                                    <i class="fas fa-envelope"></i>
+                                    Correo electrónico
+                                    <span class="optional">(Opcional)</span>
+                                </label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-at input-icon"></i>
+                                    <input type="email" id="correo" name="correo" class="form-input" placeholder="ejemplo@correo.com">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="password">
+                                        <i class="fas fa-lock"></i>
+                                        Contraseña *
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-key input-icon"></i>
+                                        <input type="password" id="password" name="password" class="form-input" placeholder="Mínimo 6 caracteres" required>
+                                        <button type="button" class="password-toggle" data-target="password">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="error-message" id="passwordError"></div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="confirmPassword">
+                                        <i class="fas fa-check-circle"></i>
+                                        Confirmar *
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-key input-icon"></i>
+                                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" placeholder="Repite la contraseña" required>
+                                        <button type="button" class="password-toggle" data-target="confirmPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="error-message" id="confirmPasswordError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="warning-box">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <p><strong>Recomendación:</strong> Agrega un correo electrónico. Si pierdes o cambias tu número de teléfono, el correo será la única forma de recuperar tu cuenta.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Datos de la primera parcela -->
+                    <div class="form-step" id="step2">
+                        <div class="register-form">
+                            <div class="form-group">
+                                <label class="form-label" for="nombreParcela">
+                                    <i class="fas fa-seedling"></i>
+                                    Nombre de la parcela *
+                                </label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-tag input-icon"></i>
+                                    <input type="text" id="nombreParcela" name="nombreParcela" class="form-input" placeholder="Ej: Parcela La Esperanza" required>
+                                </div>
+                                <div class="error-message" id="nombreParcelaError"></div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="tipoCultivo">
+                                        <i class="fas fa-leaf"></i>
+                                        Tipo de cultivo *
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-seedling input-icon"></i>
+                                        <select id="tipoCultivo" name="tipoCultivo" class="form-input" style="padding-left: 2.75rem;" required>
+                                            <option value="">Cargando cultivos...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="variedad">
+                                        <i class="fas fa-certificate"></i>
+                                        Variedad *
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-tag input-icon"></i>
+                                        <select id="variedad" name="variedad" class="form-input" style="padding-left: 2.75rem;" required disabled>
+                                            <option value="">Primero selecciona un cultivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="fechaSiembra">
+                                    <i class="fas fa-calendar"></i>
+                                    Fecha de siembra *
+                                </label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-calendar-alt input-icon"></i>
+                                    <input type="date" id="fechaSiembra" name="fechaSiembra" class="form-input" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Ubicación de la parcela *
+                                </label>
+                                <div class="map-container">
+                                    <div id="map"></div>
+                                </div>
+                                <div class="map-controls">
+                                    <button type="button" class="btn-map" id="getLocationBtn">
+                                        <i class="fas fa-location-dot"></i> Usar mi ubicación
+                                    </button>
+                                    <button type="button" class="btn-map" id="searchLocationBtn">
+                                        <i class="fas fa-search"></i> Buscar
+                                    </button>
+                                </div>
+                                <div class="coordinates-display">
+                                    <span id="latDisplay">Lat: --</span>
+                                    <span id="lngDisplay">Lon: --</span>
+                                </div>
+                                <input type="hidden" id="latitud" name="latitud">
+                                <input type="hidden" id="longitud" name="longitud">
+                                <div class="error-message" id="ubicacionError"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Confirmación -->
+                    <div class="form-step" id="step3">
+                        <div class="register-form">
+                            <div class="warning-box" style="background-color: rgba(46, 125, 50, 0.1); border-color: var(--color-primary);">
+                                <i class="fas fa-check-circle" style="color: var(--color-primary);"></i>
+                                <p><strong>¡Casi listo!</strong> Revisa que todos tus datos sean correctos antes de crear tu cuenta.</p>
+                            </div>
+                            
+                            <div style="background-color: var(--color-background); border-radius: var(--radius-md); padding: var(--spacing-lg);">
+                                <h3 style="margin-bottom: var(--spacing-md); font-size: var(--font-size-base);">
+                                    <i class="fas fa-user" style="color: var(--color-primary);"></i> Datos de cuenta
+                                </h3>
+                                <p><strong>Nombre:</strong> <span id="resumenNombre">-</span></p>
+                                <p><strong>Teléfono:</strong> <span id="resumenTelefono">-</span></p>
+                                <p><strong>Correo:</strong> <span id="resumenCorreo">No proporcionado</span></p>
+                                
+                                <h3 style="margin: var(--spacing-lg) 0 var(--spacing-md); font-size: var(--font-size-base);">
+                                    <i class="fas fa-seedling" style="color: var(--color-primary);"></i> Datos de la parcela
+                                </h3>
+                                <p><strong>Parcela:</strong> <span id="resumenParcela">-</span></p>
+                                <p><strong>Cultivo:</strong> <span id="resumenCultivo">-</span></p>
+                                <p><strong>Variedad:</strong> <span id="resumenVariedad">-</span></p>
+                                <p><strong>Siembra:</strong> <span id="resumenSiembra">-</span></p>
+                                <p><strong>Ubicación:</strong> <span id="resumenUbicacion">-</span></p>
+                            </div>
+                            
+                            <div class="terms-checkbox">
+                                <input type="checkbox" id="acceptTerms" required>
+                                <label for="acceptTerms">
+                                    He leído y acepto los <a href="terminos.html" target="_blank">Términos y Condiciones</a> y la 
+                                    <a href="privacidad.html" target="_blank">Política de Privacidad</a> de PIXCAPP.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botones de navegación -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">
+                            <i class="fas fa-arrow-left"></i> Anterior
+                        </button>
+                        <button type="button" class="btn btn-primary" id="nextBtn">
+                            Siguiente <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">
+                            <i class="fas fa-check"></i> Crear cuenta
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="login-link">
+                    <p>¿Ya tienes una cuenta? <a href="login.html">Iniciar Sesión</a></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel Derecho - Imagen Hero -->
+        <div class="hero-panel">
+            <div class="hero-content">
+                <h2 class="hero-title">Comienza a cultivar con PIXCAPP</h2>
+                <p class="hero-text">
+                    Regístrate gratis y obtén acceso a:
+                </p>
+                <ul class="hero-features">
+                    <li>
+                        <i class=""></i>
+                        <span></span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Seguimiento de crecimiento</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Guía técnica de cultivos</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Conexión con ingenieros agrónomos</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // ============================================
+        // TEMA GLOBAL - Se aplica desde localStorage
+        // ============================================
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+        })();
+        
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') {
+                document.body.setAttribute('data-theme', e.newValue || 'light');
+            }
+        });
+        
+        // ============================================
+        // PASSWORD TOGGLE
+        // ============================================
+        document.querySelectorAll('.password-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.dataset.target;
+                const input = document.getElementById(targetId);
+                const icon = btn.querySelector('i');
+                
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                icon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+            });
+        });
+        
+        // ============================================
+        // FORMATO TELEFONO
+        // ============================================
+        const telefonoInput = document.getElementById('telefono');
+        telefonoInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+            e.target.value = value;
+        });
+        
+        // ============================================
+        // FOTO DE PERFIL
+        // ============================================
+        const fotoPerfil = document.getElementById('fotoPerfil');
+        const photoPreview = document.getElementById('photoPreview');
+        const removePhoto = document.getElementById('removePhoto');
+        let fotoBase64 = null;
+        
+        fotoPerfil.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    photoPreview.innerHTML = `<img src="${event.target.result}" alt="Foto de perfil">`;
+                    fotoBase64 = event.target.result;
+                    removePhoto.style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        removePhoto.addEventListener('click', () => {
+            fotoPerfil.value = '';
+            photoPreview.innerHTML = '<i class="fas fa-user"></i>';
+            fotoBase64 = null;
+            removePhoto.style.display = 'none';
+        });
+        
+        // ============================================
+        // CARGAR CULTIVOS Y VARIEDADES DINÁMICAS
+        // ============================================
+        
+        // Cache de variedades por cultivo
+        let variedadesCache = {};
+        
+        // Cargar lista de cultivos desde la base de datos (público)
+        async function cargarCultivos() {
+            const cultivoSelect = document.getElementById('tipoCultivo');
+            cultivoSelect.innerHTML = '<option value="">Cargando cultivos...</option>';
+            
+            try {
+                const response = await fetch('api/cultivos/listar-publico.php');
+                const data = await response.json();
+                
+                if (data.success && data.cultivos && data.cultivos.length > 0) {
+                    cultivoSelect.innerHTML = '<option value="">Selecciona un cultivo</option>';
+                    
+                    data.cultivos.forEach(cultivo => {
+                        const option = document.createElement('option');
+                        option.value = cultivo.id;
+                        option.textContent = `${cultivo.nombre}${cultivo.nombre_cientifico ? ` (${cultivo.nombre_cientifico})` : ''}`;
+                        option.dataset.nombre = cultivo.nombre;
+                        cultivoSelect.appendChild(option);
+                    });
+                    
+                    // Si hay un valor guardado temporalmente, restaurarlo
+                    const tempCultivo = sessionStorage.getItem('pixcapp_temp_cultivo_id');
+                    if (tempCultivo) {
+                        cultivoSelect.value = tempCultivo;
+                        if (tempCultivo) cargarVariedades(tempCultivo);
+                    }
+                } else {
+                    cultivoSelect.innerHTML = '<option value="">No hay cultivos disponibles</option>';
+                }
+            } catch (error) {
+                console.error('Error al cargar cultivos:', error);
+                cultivoSelect.innerHTML = '<option value="">Error al cargar cultivos</option>';
+            }
+        }
+        
+        // Cargar variedades según el cultivo seleccionado
+        async function cargarVariedades(cultivoId) {
+            const variedadSelect = document.getElementById('variedad');
+            variedadSelect.innerHTML = '<option value="">Cargando variedades...</option>';
+            variedadSelect.disabled = true;
+            
+            // Verificar si ya tenemos las variedades en caché
+            if (variedadesCache[cultivoId]) {
+                renderVariedades(variedadesCache[cultivoId]);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`api/cultivos/variedades-publico.php?cultivo_id=${cultivoId}`);
+                const data = await response.json();
+                
+                if (data.success && data.variedades && data.variedades.length > 0) {
+                    variedadesCache[cultivoId] = data.variedades;
+                    renderVariedades(data.variedades);
+                } else {
+                    variedadSelect.innerHTML = '<option value="">No hay variedades disponibles</option>';
+                    variedadSelect.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error al cargar variedades:', error);
+                variedadSelect.innerHTML = '<option value="">Error al cargar variedades</option>';
+            }
+        }
+        
+        function renderVariedades(variedades) {
+            const variedadSelect = document.getElementById('variedad');
+            variedadSelect.innerHTML = '<option value="">Selecciona una variedad</option>';
+            
+            variedades.forEach(variedad => {
+                const option = document.createElement('option');
+                option.value = variedad.nombre;
+                let texto = variedad.nombre;
+                if (variedad.descripcion) {
+                    texto += ` - ${variedad.descripcion}`;
+                } else if (variedad.ciclo_dias) {
+                    texto += ` (Ciclo: ${variedad.ciclo_dias} días)`;
+                }
+                option.textContent = texto;
+                variedadSelect.appendChild(option);
+            });
+            
+            variedadSelect.disabled = false;
+            
+            // Restaurar valor temporal si existe
+            const tempVariedad = sessionStorage.getItem('pixcapp_temp_variedad');
+            if (tempVariedad) {
+                variedadSelect.value = tempVariedad;
+            }
+        }
+        
+        // Evento para cuando cambia el cultivo
+        document.getElementById('tipoCultivo').addEventListener('change', (e) => {
+            const cultivoId = e.target.value;
+            if (cultivoId) {
+                sessionStorage.setItem('pixcapp_temp_cultivo_id', cultivoId);
+                cargarVariedades(cultivoId);
+            } else {
+                document.getElementById('variedad').innerHTML = '<option value="">Primero selecciona un cultivo</option>';
+                document.getElementById('variedad').disabled = true;
+                sessionStorage.removeItem('pixcapp_temp_cultivo_id');
+                sessionStorage.removeItem('pixcapp_temp_variedad');
+            }
+        });
+        
+        // Guardar variedad seleccionada temporalmente
+        document.getElementById('variedad').addEventListener('change', (e) => {
+            if (e.target.value) {
+                sessionStorage.setItem('pixcapp_temp_variedad', e.target.value);
+            } else {
+                sessionStorage.removeItem('pixcapp_temp_variedad');
+            }
+        });
+        
+        // ============================================
+        // MAPA LEAFLET
+        // ============================================
+        let map;
+        let marker;
+        let lat = null;
+        let lng = null;
+        
+        function initMap() {
+            map = L.map('map').setView([19.4326, -99.1332], 5);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            const savedLat = localStorage.getItem('pixcapp_temp_lat');
+            const savedLng = localStorage.getItem('pixcapp_temp_lng');
+            if (savedLat && savedLng) {
+                setLocation(parseFloat(savedLat), parseFloat(savedLng));
+            }
+            
+            map.on('click', (e) => {
+                setLocation(e.latlng.lat, e.latlng.lng);
+            });
+        }
+        
+        function setLocation(latitude, longitude) {
+            lat = latitude;
+            lng = longitude;
+            
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng]).addTo(map);
+            }
+            
+            map.setView([lat, lng], 15);
+            
+            document.getElementById('latitud').value = lat;
+            document.getElementById('longitud').value = lng;
+            document.getElementById('latDisplay').textContent = `Lat: ${lat.toFixed(6)}°`;
+            document.getElementById('lngDisplay').textContent = `Lon: ${lng.toFixed(6)}°`;
+            
+            localStorage.setItem('pixcapp_temp_lat', lat);
+            localStorage.setItem('pixcapp_temp_lng', lng);
+        }
+        
+        document.getElementById('getLocationBtn').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        setLocation(position.coords.latitude, position.coords.longitude);
+                    },
+                    () => {
+                        showAlert('No se pudo obtener tu ubicación. Selecciona manualmente en el mapa.', 'error');
+                    }
+                );
+            } else {
+                showAlert('Tu navegador no soporta geolocalización.', 'error');
+            }
+        });
+        
+        document.getElementById('searchLocationBtn').addEventListener('click', () => {
+            const search = prompt('Ingresa una ubicación (ej: "Ciudad de México"):');
+            if (search) {
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(search)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            setLocation(parseFloat(data[0].lat), parseFloat(data[0].lon));
+                        } else {
+                            showAlert('No se encontró la ubicación.', 'error');
+                        }
+                    })
+                    .catch(() => showAlert('Error al buscar ubicación.', 'error'));
+            }
+        });
+        
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !map) {
+                initMap();
+                observer.disconnect();
+            }
+        });
+        observer.observe(document.getElementById('step2'));
+        
+        // ============================================
+        // NAVEGACIÓN ENTRE PASOS
+        // ============================================
+        let currentStep = 1;
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        function showStep(step) {
+            step1.classList.remove('active');
+            step2.classList.remove('active');
+            step3.classList.remove('active');
+            
+            if (step === 1) step1.classList.add('active');
+            if (step === 2) step2.classList.add('active');
+            if (step === 3) step3.classList.add('active');
+            
+            prevBtn.style.display = step === 1 ? 'none' : 'flex';
+            
+            if (step === 3) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'flex';
+                updateSummary();
+            } else {
+                nextBtn.style.display = 'flex';
+                submitBtn.style.display = 'none';
+            }
+            
+            updateStepIndicators(step);
+        }
+        
+        function updateStepIndicators(step) {
+            const step1Indicator = document.getElementById('step1Indicator');
+            const step2Indicator = document.getElementById('step2Indicator');
+            const step3Indicator = document.getElementById('step3Indicator');
+            const line1 = document.getElementById('line1');
+            const line2 = document.getElementById('line2');
+            
+            step1Indicator.classList.remove('active', 'completed');
+            step2Indicator.classList.remove('active', 'completed');
+            step3Indicator.classList.remove('active', 'completed');
+            line1.classList.remove('completed');
+            line2.classList.remove('completed');
+            
+            if (step === 1) {
+                step1Indicator.classList.add('active');
+            } else if (step === 2) {
+                step1Indicator.classList.add('completed');
+                step2Indicator.classList.add('active');
+                line1.classList.add('completed');
+            } else {
+                step1Indicator.classList.add('completed');
+                step2Indicator.classList.add('completed');
+                step3Indicator.classList.add('active');
+                line1.classList.add('completed');
+                line2.classList.add('completed');
+            }
+            
+            updateStepIcons();
+        }
+        
+        function updateStepIcons() {
+            document.querySelectorAll('.step.completed .step-icon').forEach(icon => {
+                const span = icon.querySelector('span');
+                const i = icon.querySelector('i');
+                if (span && i) {
+                    span.style.display = 'none';
+                    i.style.display = 'block';
+                }
+            });
+        }
+        
+        function updateSummary() {
+            document.getElementById('resumenNombre').textContent = document.getElementById('nombre').value || '-';
+            document.getElementById('resumenTelefono').textContent = document.getElementById('telefono').value || '-';
+            document.getElementById('resumenCorreo').textContent = document.getElementById('correo').value || 'No proporcionado';
+            document.getElementById('resumenParcela').textContent = document.getElementById('nombreParcela').value || '-';
+            
+            const cultivoSelect = document.getElementById('tipoCultivo');
+            const cultivoText = cultivoSelect.options[cultivoSelect.selectedIndex]?.text || '-';
+            document.getElementById('resumenCultivo').textContent = cultivoText;
+            
+            const variedadSelect = document.getElementById('variedad');
+            document.getElementById('resumenVariedad').textContent = variedadSelect.value || '-';
+            document.getElementById('resumenSiembra').textContent = document.getElementById('fechaSiembra').value || '-';
+            document.getElementById('resumenUbicacion').textContent = lat ? `${lat.toFixed(6)}, ${lng.toFixed(6)}` : '-';
+        }
+        
+        function validateStep1() {
+            let isValid = true;
+            const nombre = document.getElementById('nombre').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            document.getElementById('nombreError').textContent = '';
+            document.getElementById('telefonoError').textContent = '';
+            document.getElementById('passwordError').textContent = '';
+            document.getElementById('confirmPasswordError').textContent = '';
+            
+            if (!nombre) {
+                document.getElementById('nombreError').textContent = 'El nombre es requerido';
+                isValid = false;
+            }
+            
+            if (!telefono || telefono.length !== 10) {
+                document.getElementById('telefonoError').textContent = 'Teléfono debe tener 10 dígitos';
+                isValid = false;
+            }
+            
+            if (!password || password.length < 6) {
+                document.getElementById('passwordError').textContent = 'Mínimo 6 caracteres';
+                isValid = false;
+            }
+            
+            if (password !== confirmPassword) {
+                document.getElementById('confirmPasswordError').textContent = 'Las contraseñas no coinciden';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function validateStep2() {
+            let isValid = true;
+            const nombreParcela = document.getElementById('nombreParcela').value.trim();
+            const cultivo = document.getElementById('tipoCultivo').value;
+            const variedad = document.getElementById('variedad').value;
+            
+            document.getElementById('nombreParcelaError').textContent = '';
+            document.getElementById('ubicacionError').textContent = '';
+            
+            if (!nombreParcela) {
+                document.getElementById('nombreParcelaError').textContent = 'El nombre de la parcela es requerido';
+                isValid = false;
+            }
+            
+            if (!cultivo) {
+                alert('Selecciona un tipo de cultivo');
+                isValid = false;
+            }
+            
+            if (!variedad) {
+                alert('Selecciona una variedad');
+                isValid = false;
+            }
+            
+            if (!lat || !lng) {
+                document.getElementById('ubicacionError').textContent = 'Selecciona la ubicación en el mapa';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        nextBtn.addEventListener('click', () => {
+            if (currentStep === 1 && validateStep1()) {
+                currentStep = 2;
+                showStep(currentStep);
+                setTimeout(() => map?.invalidateSize(), 200);
+            } else if (currentStep === 2 && validateStep2()) {
+                currentStep = 3;
+                showStep(currentStep);
+            }
+        });
+        
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+                if (currentStep === 2) {
+                    setTimeout(() => map?.invalidateSize(), 200);
+                }
+            }
+        });
+        
+        // ============================================
+        // ALERTAS
+        // ============================================
+        function showAlert(message, type = 'error') {
+            const container = document.getElementById('alertContainer');
+            const icon = type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle';
+            
+            container.innerHTML = `
+                <div class="alert alert-${type}">
+                    <i class="fas ${icon}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+        
+        // ============================================
+        // SUBMIT FORM
+        // ============================================
+        const registerForm = document.getElementById('registerForm');
+        
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!document.getElementById('acceptTerms').checked) {
+                showAlert('Debes aceptar los Términos y Condiciones');
+                return;
+            }
+            
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner"></span> Creando cuenta...';
+            submitBtn.disabled = true;
+            
+            const formData = {
+                nombre: document.getElementById('nombre').value.trim(),
+                telefono: document.getElementById('telefono').value.trim(),
+                correo: document.getElementById('correo').value.trim(),
+                password: document.getElementById('password').value,
+                foto_perfil: fotoBase64,
+                parcela: {
+                    nombre: document.getElementById('nombreParcela').value.trim(),
+                    cultivo_id: document.getElementById('tipoCultivo').value,
+                    variedad: document.getElementById('variedad').value,
+                    fecha_siembra: document.getElementById('fechaSiembra').value,
+                    latitud: lat,
+                    longitud: lng
+                }
+            };
+            
+            try {
+                const response = await fetch('api/auth/registro-agricultor.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('¡Cuenta creada exitosamente! Redirigiendo...', 'success');
+                    
+                    localStorage.setItem('pixcapp_token', data.token);
+                    localStorage.setItem('pixcapp_user', JSON.stringify(data.user));
+                    
+                    setTimeout(() => {
+                        window.location.href = 'app/agricultor/dashboard.html';
+                    }, 2000);
+                } else {
+                    showAlert(data.message || 'Error al crear la cuenta');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión. Intenta nuevamente.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Fecha por defecto (hoy)
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('fechaSiembra').value = today;
+        
+        // Cargar cultivos al iniciar la página
+        cargarCultivos();
+    </script>
+</body>
+</html>
