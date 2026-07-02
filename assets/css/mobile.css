@@ -1,0 +1,197 @@
+/* ============================================
+   PIXCAPP - ESTILOS MOBILE (max-width: 768px)
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Variables mobile */
+    :root {
+        --font-size-5xl: 2.25rem;
+        --font-size-4xl: 1.875rem;
+        --font-size-3xl: 1.5rem;
+        --font-size-2xl: 1.25rem;
+        --container-padding: 1rem;
+    }
+    
+    /* Header mobile */
+    .header-container {
+        padding: var(--spacing-sm) var(--container-padding);
+    }
+    
+    .logo-text {
+        font-size: var(--font-size-lg);
+    }
+    
+    .logo-icon {
+        font-size: 1.5rem;
+    }
+    
+    .nav-desktop {
+        display: none;
+    }
+    
+    .header-actions .btn {
+        display: none;
+    }
+    
+    .menu-toggle {
+        display: block;
+    }
+    
+    /* Hero mobile */
+    .hero {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .hero-title {
+        font-size: var(--font-size-4xl);
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .hero-icon {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: var(--font-size-lg);
+    }
+    
+    .hero-features {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .hero-features .separator {
+        display: none;
+    }
+    
+    .hero-cta {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+    
+    .hero-cta .btn {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    /* Features mobile */
+    .features {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .section-title {
+        font-size: var(--font-size-3xl);
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .feature-card {
+        padding: var(--spacing-lg);
+    }
+    
+    /* How it works mobile */
+    .how-it-works {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .steps {
+        flex-direction: column;
+        gap: var(--spacing-lg);
+    }
+    
+    .step {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .step-arrow {
+        transform: rotate(90deg);
+    }
+    
+    /* Testimonials mobile */
+    .testimonials {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .testimonial-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .testimonial-text {
+        font-size: var(--font-size-base);
+    }
+    
+    /* CTA mobile */
+    .cta-final {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .cta-final h2 {
+        font-size: var(--font-size-2xl);
+    }
+    
+    /* Footer mobile */
+    .footer {
+        padding: var(--spacing-xl) 0 var(--spacing-md);
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+        text-align: center;
+    }
+    
+    .footer-col a,
+    .footer-col p {
+        justify-content: center;
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+    
+    /* Ajustes de botones mobile */
+    .btn {
+        padding: 0.75rem 1rem;
+        font-size: var(--font-size-base);
+    }
+    
+    .btn-large {
+        padding: 0.875rem 1.5rem;
+    }
+    
+    /* Container mobile */
+    .container {
+        padding: 0 var(--spacing-md);
+    }
+    
+    /* Overlay del menú mobile */
+    .mobile-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all var(--transition-base);
+    }
+    
+    .mobile-menu-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}

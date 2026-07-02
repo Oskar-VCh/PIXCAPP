@@ -1,0 +1,98 @@
+/* ============================================
+   PIXCAPP - ESTILOS DESKTOP (min-width: 769px)
+   ============================================ */
+
+@media (min-width: 769px) {
+    /* Ocultar elementos mobile */
+    .mobile-menu {
+        display: none;
+    }
+    
+    /* Header desktop */
+    .header-container {
+        padding: var(--spacing-md) var(--spacing-xl);
+    }
+    
+    /* Hero desktop */
+    .hero {
+        padding: var(--spacing-3xl) 0;
+    }
+    
+    .hero-content {
+        max-width: 900px;
+    }
+    
+    /* Features desktop */
+    .features-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    /* Steps desktop */
+    .steps {
+        gap: var(--spacing-2xl);
+    }
+    
+    .step {
+        max-width: 300px;
+    }
+    
+    /* Testimonials desktop */
+    .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Footer desktop */
+    .footer-grid {
+        grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    }
+    
+    /* Hover effects desktop */
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .feature-card {
+        transition: transform var(--transition-base), box-shadow var(--transition-base);
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-xl);
+    }
+    
+    .testimonial-card {
+        transition: transform var(--transition-base);
+    }
+    
+    .testimonial-card:hover {
+        transform: scale(1.02);
+    }
+    
+    /* Container desktop */
+    .container {
+        padding: 0 var(--spacing-xl);
+    }
+}
+
+/* Pantallas grandes (min-width: 1200px) */
+@media (min-width: 1200px) {
+    :root {
+        --container-max: 1200px;
+    }
+    
+    .hero-content {
+        max-width: 1000px;
+    }
+    
+    .features-grid {
+        gap: var(--spacing-2xl);
+    }
+}
+
+/* Pantallas extra grandes (min-width: 1440px) */
+@media (min-width: 1440px) {
+    :root {
+        --container-max: 1320px;
+    }
+}
