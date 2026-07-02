@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>Reportes - PIXCAPP</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --color-primary: #2E7D32; --color-primary-light: #4CAF50; --color-primary-dark: #1B5E20;
+            --color-background: #F5F7FA; --color-surface: #FFFFFF;
+            --color-text-primary: #1A202C; --color-text-secondary: #2D3748; --color-text-muted: #4A5568;
+            --color-border: #E2E8F0; --color-success: #38A169; --color-warning: #ED8936;
+            --color-error: #E53E3E; --color-info: #3182CE;
+            --sidebar-width: 260px; --header-height: 60px; --bottom-nav-height: 65px;
+            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --spacing-xs: 0.25rem; --spacing-sm: 0.5rem; --spacing-md: 1rem; --spacing-lg: 1.5rem; --spacing-xl: 2rem;
+            --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-full: 9999px;
+            --transition: all 0.25s ease;
+        }
+        
+        [data-theme="dark"] {
+            --color-primary: #66BB6A; --color-primary-light: #81C784; --color-primary-dark: #388E3C;
+            --color-background: #0F172A; --color-surface: #1E293B;
+            --color-text-primary: #F8FAFC; --color-text-secondary: #E2E8F0; --color-text-muted: #CBD5E1;
+            --color-border: #334155;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--color-background);
+            color: var(--color-text-primary); min-height: 100vh; transition: var(--transition);
+        }
+        
+        .app-container { display: flex; min-height: 100vh; }
+        
+        /* === SIDEBAR (IDÉNTICO AL DASHBOARD) === */
+        .sidebar {
+            width: var(--sidebar-width); background: var(--color-surface);
+            border-right: 1px solid var(--color-border); position: fixed; top: 0; left: 0; bottom: 0;
+            z-index: 200; transition: transform 0.3s ease; transform: translateX(0);
+            display: flex; flex-direction: column;
+        }
+        .sidebar.collapsed { transform: translateX(-100%); }
+        
+        .sidebar-header { padding: var(--spacing-lg); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--spacing-md); }
+        .sidebar-logo { height: 36px; width: auto; transition: filter 0.3s ease; }
+        body:not([data-theme="dark"]) .sidebar-logo { filter: brightness(0) invert(0); }
+        [data-theme="dark"] .sidebar-logo { filter: brightness(0) invert(1); }
+        .sidebar-title { font-size: 1.25rem; font-weight: 700; color: var(--color-primary); }
+        
+        .sidebar-user { padding: var(--spacing-lg); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--spacing-md); }
+        .user-avatar { width: 44px; height: 44px; border-radius: var(--radius-full); background: var(--color-primary-light); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; overflow: hidden; }
+        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .user-name { font-weight: 600; font-size: 0.9375rem; }
+        .user-role { font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; }
+        
+        .sidebar-nav { flex: 1; padding: var(--spacing-md); overflow-y: auto; }
+        .nav-item { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); color: var(--color-text-secondary); text-decoration: none; border-radius: var(--radius-md); transition: var(--transition); margin-bottom: 2px; font-size: 0.9375rem; }
+        .nav-item i { width: 22px; font-size: 1.1rem; text-align: center; }
+        .nav-item:hover { background: var(--color-background); color: var(--color-primary); }
+        .nav-item.active { background: var(--color-primary); color: white; }
+        
+        .sidebar-footer { padding: var(--spacing-lg); border-top: 1px solid var(--color-border); }
+        .connection-status { display: flex; align-items: center; gap: var(--spacing-sm); font-size: 0.8125rem; color: var(--color-text-muted); margin-bottom: var(--spacing-md); }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-success); }
+        .status-dot.offline { background: var(--color-error); }
+        
+        /* === MAIN CONTENT === */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); transition: margin-left 0.3s ease; display: flex; flex-direction: column; min-height: 100vh; }
+        .main-content.expanded { margin-left: 0; }
+        
+        /* === HEADER === */
+        .header {
+            background: var(--color-surface); border-bottom: 1px solid var(--color-border);
+            padding: 0 var(--spacing-xl); display: flex; align-items: center; justify-content: space-between;
+            height: var(--header-height); position: sticky; top: 0; z-index: 50;
+        }
+        .header-left { display: flex; align-items: center; gap: var(--spacing-md); }
+        .header-right { display: flex; align-items: center; gap: var(--spacing-md); }
+        
+        .sidebar-toggle { display: none; background: none; border: none; font-size: 1.35rem; color: var(--color-text-primary); cursor: pointer; padding: var(--spacing-sm); }
+        
+        .mobile-logo { display: none; align-items: center; gap: var(--spacing-sm); }
+        .mobile-logo-img { height: 32px; width: auto; transition: filter 0.3s ease; }
+        body:not([data-theme="dark"]) .mobile-logo-img { filter: brightness(0) invert(0); }
+        [data-theme="dark"] .mobile-logo-img { filter: brightness(0) invert(1); }
+        .mobile-logo-text { font-size: 1.125rem; font-weight: 700; color: var(--color-primary); }
+        
+        .page-title { font-size: 1.25rem; font-weight: 700; color: var(--color-text-primary); }
+        
+        /* Contenido específico de reportes */
+        .content { flex: 1; padding: var(--spacing-xl); }
+        
+        .filter-bar {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+            align-items: flex-end;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 180px;
+        }
+        
+        .filter-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            margin-bottom: var(--spacing-xs);
+            text-transform: uppercase;
+        }
+        
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.875rem;
+            font-family: 'Inter', sans-serif;
+            color: var(--color-text-primary);
+            background: var(--color-background);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+        
+        .filter-group select:focus, .filter-group input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: 0.6rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--color-primary);
+            color: white;
+        }
+        
+        .btn:hover {
+            background: var(--color-primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--color-background);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+        
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .stat-card {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+        
+        .stat-card i {
+            font-size: 1.75rem;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .stat-card .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+        
+        .stat-card .stat-label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-top: var(--spacing-xs);
+        }
+        
+        .card {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .card-title i {
+            color: var(--color-primary);
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .events-table {
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        .events-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .events-table th,
+        .events-table td {
+            padding: var(--spacing-md);
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .events-table th {
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+        }
+        
+        .event-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.6875rem;
+            font-weight: 600;
+        }
+        
+        .event-badge.riego { background: rgba(46,125,50,0.1); color: var(--color-primary); }
+        .event-badge.fertilizacion { background: rgba(56,161,105,0.1); color: var(--color-success); }
+        .event-badge.plaga { background: rgba(237,137,54,0.1); color: var(--color-warning); }
+        .event-badge.foto { background: rgba(49,130,206,0.1); color: var(--color-info); }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--color-text-muted);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        /* === BOTTOM NAV === */
+        .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom-nav-height); background: var(--color-surface); border-top: 1px solid var(--color-border); z-index: 100; }
+        .bottom-nav-items { display: flex; align-items: center; justify-content: space-around; height: 100%; max-width: 500px; margin: 0 auto; }
+        .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--color-text-muted); text-decoration: none; font-size: 0.6875rem; transition: var(--transition); }
+        .bottom-nav-item i { font-size: 1.2rem; }
+        .bottom-nav-item.active { color: var(--color-primary); }
+        .fab-button { width: 50px; height: 50px; border-radius: 50%; background: var(--color-primary); color: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; box-shadow: var(--shadow-lg); margin-top: -25px; }
+        
+        .fab-menu { position: fixed; bottom: 80px; right: 20px; display: none; flex-direction: column; gap: var(--spacing-sm); z-index: 200; }
+        .fab-menu.active { display: flex; }
+        .fab-menu-item { display: flex; align-items: center; gap: var(--spacing-md); background: var(--color-surface); padding: var(--spacing-md) var(--spacing-lg); border-radius: 2rem; box-shadow: var(--shadow-md); border: 1px solid var(--color-border); color: var(--color-text-primary); text-decoration: none; font-weight: 500; font-size: 0.875rem; cursor: pointer; }
+        
+        .offline-banner { background: var(--color-warning); color: white; padding: var(--spacing-sm) var(--spacing-xl); text-align: center; font-size: 0.875rem; display: none; }
+        .offline-banner.show { display: block; }
+        
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .sidebar { display: none !important; }
+            .sidebar-toggle { display: none !important; }
+            .main-content { margin-left: 0 !important; padding-bottom: var(--bottom-nav-height); }
+            .header { padding: 0 var(--spacing-md); }
+            .mobile-logo { display: flex; }
+            .page-title { display: none; }
+            .content { padding: var(--spacing-md); }
+            .bottom-nav { display: block; }
+            .stats-summary { grid-template-columns: repeat(2, 1fr); gap: var(--spacing-md); }
+            .filter-bar { flex-direction: column; }
+            .filter-group { width: 100%; }
+            .chart-container { height: 220px; }
+        }
+        
+        @media (min-width: 769px) {
+            .sidebar-toggle { display: flex; }
+            .mobile-logo { display: none; }
+            .page-title { display: block; }
+            .bottom-nav { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR (IDÉNTICO AL DASHBOARD) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../../assets/img/logo.png" alt="PIXCAPP" class="sidebar-logo" onerror="this.src='https://placehold.co/36x36/2E7D32/white?text=P'">
+                <span class="sidebar-title">PIXCAPP</span>
+            </div>
+            <div class="sidebar-user">
+                <div class="user-avatar" id="userAvatar"><i class="fas fa-user"></i></div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUserName">Cargando...</div>
+                    <div class="user-role">Agricultor</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="cultivos.html" class="nav-item"><i class="fas fa-seedling"></i> Mis Cultivos</a>
+                <a href="reportes.html" class="nav-item active"><i class="fas fa-chart-bar"></i> Reportes</a>
+                <a href="guia.html" class="nav-item"><i class="fas fa-book"></i> Guía de Cultivos</a>
+                <a href="ingeniero.html" class="nav-item"><i class="fas fa-user-tie"></i> Mi Ingeniero</a>
+                <a href="ajustes.html" class="nav-item"><i class="fas fa-cog"></i> Ajustes</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="connection-status">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">En línea</span>
+                </div>
+                <button class="nav-item" id="logoutBtn" style="width:100%;margin-top:var(--spacing-md);border:none;background:none;cursor:pointer;font-family:Inter,sans-serif;">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+        
+        <main class="main-content" id="mainContent">
+            <div class="offline-banner" id="offlineBanner"><i class="fas fa-wifi-slash"></i> Modo sin conexión - Los datos pueden estar desactualizados</div>
+            
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                    <div class="mobile-logo">
+                        <img src="../../assets/img/logo.png" alt="PIXCAPP" class="mobile-logo-img" onerror="this.src='https://placehold.co/32x32/2E7D32/white?text=P'">
+                        <span class="mobile-logo-text">PIXCAPP</span>
+                    </div>
+                    <h1 class="page-title">Reportes</h1>
+                </div>
+            </header>
+            
+            <div class="content">
+                <!-- Filtros -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label><i class="fas fa-seedling"></i> Parcela</label>
+                        <select id="parcelaSelect">
+                            <option value="">Todas las parcelas</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-calendar"></i> Desde</label>
+                        <input type="date" id="fechaInicio">
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-calendar"></i> Hasta</label>
+                        <input type="date" id="fechaFin">
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn" id="actualizarBtn"><i class="fas fa-chart-line"></i> Actualizar</button>
+                    </div>
+                </div>
+                
+                <!-- Resumen de estadísticas -->
+                <div class="stats-summary" id="statsSummary">
+                    <div class="stat-card"><i class="fas fa-tint"></i><div class="stat-value" id="totalRiegos">0</div><div class="stat-label">Total Riegos</div></div>
+                    <div class="stat-card"><i class="fas fa-flask"></i><div class="stat-value" id="totalFertilizaciones">0</div><div class="stat-label">Fertilizaciones</div></div>
+                    <div class="stat-card"><i class="fas fa-bug"></i><div class="stat-value" id="totalPlagas">0</div><div class="stat-label">Reportes de Plaga</div></div>
+                    <div class="stat-card"><i class="fas fa-camera"></i><div class="stat-value" id="totalFotos">0</div><div class="stat-label">Fotos Tomadas</div></div>
+                </div>
+                
+                <!-- Gráfico de actividad semanal -->
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-chart-line"></i> Actividad Semanal</h2>
+                    <div class="chart-container"><canvas id="weeklyChart"></canvas></div>
+                </div>
+                
+                <!-- Gráfico de distribución -->
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-chart-pie"></i> Distribución de Eventos</h2>
+                    <div class="chart-container"><canvas id="pieChart"></canvas></div>
+                </div>
+                
+                <!-- Tabla de eventos recientes -->
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-list"></i> Eventos Recientes</h2>
+                    <div class="events-table" id="eventsTable">
+                        <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Cargando eventos...</p></div>
+                    </div>
+                </div>
+                
+                <!-- Exportar -->
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-file-pdf"></i> Exportar Reporte</h2>
+                    <p style="color:var(--color-text-secondary);margin-bottom:var(--spacing-lg);">Genera un reporte completo de tus cultivos en formato PDF con todos los datos filtrados.</p>
+                    <button class="btn" id="exportBtn"><i class="fas fa-download"></i> Descargar PDF</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- BOTTOM NAV (SOLO MOBILE) -->
+    <nav class="bottom-nav" id="bottomNav">
+        <div class="bottom-nav-items">
+            <a href="dashboard.html" class="bottom-nav-item"><i class="fas fa-home"></i><span>Inicio</span></a>
+            <a href="cultivos.html" class="bottom-nav-item"><i class="fas fa-seedling"></i><span>Cultivos</span></a>
+            <button class="fab-button" id="fabButton"><i class="fas fa-plus"></i></button>
+            <a href="reportes.html" class="bottom-nav-item active"><i class="fas fa-chart-bar"></i><span>Reportes</span></a>
+            <a href="perfil.html" class="bottom-nav-item"><i class="fas fa-user"></i><span>Perfil</span></a>
+        </div>
+    </nav>
+    
+    <!-- FAB Menu para móvil -->
+    <div class="fab-menu" id="fabMenu">
+        <button class="fab-menu-item" onclick="window.location.href='registro-riego.html'"><i class="fas fa-tint"></i> Registrar Riego</button>
+        <button class="fab-menu-item" onclick="window.location.href='registro-plaga.html'"><i class="fas fa-bug"></i> Reportar Plaga</button>
+        <button class="fab-menu-item" onclick="window.location.href='registro-fertilizacion.html'"><i class="fas fa-flask"></i> Fertilización</button>
+        <button class="fab-menu-item" onclick="window.location.href='tomar-foto.html'"><i class="fas fa-camera"></i> Tomar Foto</button>
+    </div>
+    
+    <script>
+        // ============================================
+        // TEMA Y CONFIGURACIÓN INICIAL
+        // ============================================
+        (function(){ 
+            const theme = localStorage.getItem('theme') || 'light'; 
+            document.body.setAttribute('data-theme', theme); 
+        })();
+        
+        window.addEventListener('storage', (e) => { 
+            if(e.key === 'theme') document.body.setAttribute('data-theme', e.newValue || 'light'); 
+        });
+        
+        // ============================================
+        // VARIABLES GLOBALES
+        // ============================================
+        const API = '../../api';
+        let currentUser = null;
+        let allParcelas = [];
+        let eventosData = [];
+        let weeklyChart = null;
+        let pieChart = null;
+        
+        // ============================================
+        // CONEXIÓN / OFFLINE
+        // ============================================
+        function updateConnection() {
+            const isOnline = navigator.onLine;
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const offlineBanner = document.getElementById('offlineBanner');
+            
+            if (statusDot) {
+                statusDot.className = 'status-dot' + (isOnline ? '' : ' offline');
+            }
+            if (statusText) {
+                statusText.textContent = isOnline ? 'En línea' : 'Sin conexión';
+            }
+            if (offlineBanner) {
+                offlineBanner.classList.toggle('show', !isOnline);
+            }
+        }
+        
+        // ============================================
+        // AUTH
+        // ============================================
+        async function checkAuth() {
+            const token = localStorage.getItem('pixcapp_token');
+            const user = JSON.parse(localStorage.getItem('pixcapp_user') || '{}');
+            
+            if (!token || !user.id) {
+                window.location.href = '../../login.html';
+                return false;
+            }
+            
+            try {
+                const response = await fetch(`${API}/auth/verify.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+                const data = await response.json();
+                
+                if (!data.valid || user.rol !== 'agricultor') {
+                    clearSession();
+                    window.location.href = '../../login.html';
+                    return false;
+                }
+                
+                currentUser = data.user || user;
+                return true;
+            } catch (error) {
+                if (!navigator.onLine) {
+                    currentUser = user;
+                    return true;
+                }
+                return false;
+            }
+        }
+        
+        function clearSession() {
+            localStorage.removeItem('pixcapp_token');
+            localStorage.removeItem('pixcapp_user');
+        }
+        
+        // ============================================
+        // CARGAR PARCELAS
+        // ============================================
+        async function loadParcelas() {
+            const token = localStorage.getItem('pixcapp_token');
+            
+            try {
+                const response = await fetch(`${API}/parcelas/listar.php`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    allParcelas = data.parcelas;
+                    localStorage.setItem('pixcapp_cultivos', JSON.stringify(data.parcelas));
+                    
+                    const select = document.getElementById('parcelaSelect');
+                    select.innerHTML = '<option value="">Todas las parcelas</option>' + 
+                        allParcelas.map(p => `<option value="${p.id}">${escapeHtml(p.nombre)}</option>`).join('');
+                }
+            } catch (error) {
+                allParcelas = JSON.parse(localStorage.getItem('pixcapp_cultivos') || '[]');
+                const select = document.getElementById('parcelaSelect');
+                select.innerHTML = '<option value="">Todas las parcelas</option>' + 
+                    allParcelas.map(p => `<option value="${p.id}">${escapeHtml(p.nombre)}</option>`).join('');
+            }
+        }
+        
+        // ============================================
+        // CARGAR EVENTOS Y REPORTES
+        // ============================================
+        async function loadReportes() {
+            const token = localStorage.getItem('pixcapp_token');
+            const parcelaId = document.getElementById('parcelaSelect').value;
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+            
+            let url = `${API}/reportes/eventos.php?`;
+            if (parcelaId) url += `parcela_id=${parcelaId}&`;
+            if (fechaInicio) url += `fecha_inicio=${fechaInicio}&`;
+            if (fechaFin) url += `fecha_fin=${fechaFin}&`;
+            
+            try {
+                const response = await fetch(url, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    eventosData = data.eventos;
+                    localStorage.setItem('pixcapp_reportes', JSON.stringify(data));
+                    updateStats(data.stats);
+                    updateEventsTable(data.eventos);
+                    updateCharts(data.eventos);
+                } else {
+                    throw new Error('Error al cargar datos');
+                }
+            } catch (error) {
+                // Modo offline: cargar desde caché
+                const cached = JSON.parse(localStorage.getItem('pixcapp_reportes') || '{"eventos":[],"stats":{}}');
+                eventosData = cached.eventos || [];
+                updateStats(cached.stats || {});
+                updateEventsTable(eventosData);
+                updateCharts(eventosData);
+            }
+        }
+        
+        function updateStats(stats) {
+            document.getElementById('totalRiegos').textContent = stats.riegos || 0;
+            document.getElementById('totalFertilizaciones').textContent = stats.fertilizaciones || 0;
+            document.getElementById('totalPlagas').textContent = stats.plagas || 0;
+            document.getElementById('totalFotos').textContent = stats.fotos || 0;
+        }
+        
+        function updateEventsTable(eventos) {
+            const container = document.getElementById('eventsTable');
+            
+            if (!eventos.length) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-chart-line"></i><p>No hay eventos en el período seleccionado</p></div>';
+                return;
+            }
+            
+            const tipoIcon = {
+                'riego': '<i class="fas fa-tint"></i>',
+                'fertilizacion': '<i class="fas fa-flask"></i>',
+                'plaga': '<i class="fas fa-bug"></i>',
+                'foto': '<i class="fas fa-camera"></i>'
+            };
+            
+            const tipoClass = {
+                'riego': 'riego',
+                'fertilizacion': 'fertilizacion',
+                'plaga': 'plaga',
+                'foto': 'foto'
+            };
+            
+            const tipoTexto = {
+                'riego': 'Riego',
+                'fertilizacion': 'Fertilización',
+                'plaga': 'Plaga',
+                'foto': 'Foto'
+            };
+            
+            container.innerHTML = `
+                <table>
+                    <thead>
+                        <tr><th>Fecha</th><th>Parcela</th><th>Tipo</th><th>Detalle</th></tr>
+                    </thead>
+                    <tbody>
+                        ${eventos.map(e => `
+                            <tr>
+                                <td>${formatDate(e.fecha)}</td>
+                                <td>${escapeHtml(e.parcela_nombre || '-')}</td>
+                                <td><span class="event-badge ${tipoClass[e.tipo]}">${tipoIcon[e.tipo]} ${tipoTexto[e.tipo]}</span></td>
+                                <td>${escapeHtml(e.descripcion || '-')}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        function updateCharts(eventos) {
+            // Datos para gráfico semanal
+            const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+            const riegosPorDia = new Array(7).fill(0);
+            const fertilizacionesPorDia = new Array(7).fill(0);
+            const plagasPorDia = new Array(7).fill(0);
+            
+            eventos.forEach(e => {
+                const fecha = new Date(e.fecha);
+                const diaSemana = fecha.getDay(); // 0 = domingo
+                const index = diaSemana === 0 ? 6 : diaSemana - 1;
+                
+                if (e.tipo === 'riego') riegosPorDia[index]++;
+                else if (e.tipo === 'fertilizacion') fertilizacionesPorDia[index]++;
+                else if (e.tipo === 'plaga') plagasPorDia[index]++;
+            });
+            
+            // Actualizar gráfico semanal
+            if (weeklyChart) weeklyChart.destroy();
+            const wCtx = document.getElementById('weeklyChart').getContext('2d');
+            weeklyChart = new Chart(wCtx, {
+                type: 'bar',
+                data: {
+                    labels: diasSemana,
+                    datasets: [
+                        { label: 'Riegos', data: riegosPorDia, backgroundColor: 'rgba(46,125,50,0.7)', borderRadius: 8 },
+                        { label: 'Fertilizaciones', data: fertilizacionesPorDia, backgroundColor: 'rgba(56,161,105,0.7)', borderRadius: 8 },
+                        { label: 'Plagas', data: plagasPorDia, backgroundColor: 'rgba(237,137,54,0.7)', borderRadius: 8 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } }
+                }
+            });
+            
+            // Datos para gráfico de pastel
+            const totalRiegos = eventos.filter(e => e.tipo === 'riego').length;
+            const totalFertilizaciones = eventos.filter(e => e.tipo === 'fertilizacion').length;
+            const totalPlagas = eventos.filter(e => e.tipo === 'plaga').length;
+            const totalFotos = eventos.filter(e => e.tipo === 'foto').length;
+            
+            if (pieChart) pieChart.destroy();
+            const pCtx = document.getElementById('pieChart').getContext('2d');
+            pieChart = new Chart(pCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Riego', 'Fertilización', 'Plaga', 'Foto'],
+                    datasets: [{
+                        data: [totalRiegos, totalFertilizaciones, totalPlagas, totalFotos],
+                        backgroundColor: ['rgba(46,125,50,0.7)', 'rgba(56,161,105,0.7)', 'rgba(237,137,54,0.7)', 'rgba(49,130,206,0.7)'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+        
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // ============================================
+        // EXPORTAR PDF
+        // ============================================
+        function exportPDF() {
+            if (!eventosData.length) {
+                alert('No hay datos para exportar');
+                return;
+            }
+            
+            // Generar reporte en texto (simulado - para demo)
+            const parcelaSelect = document.getElementById('parcelaSelect');
+            const parcelaNombre = parcelaSelect.options[parcelaSelect.selectedIndex]?.text || 'Todas';
+            const fechaInicio = document.getElementById('fechaInicio').value || 'Sin fecha inicio';
+            const fechaFin = document.getElementById('fechaFin').value || 'Sin fecha fin';
+            
+            const totalRiegos = eventosData.filter(e => e.tipo === 'riego').length;
+            const totalFert = eventosData.filter(e => e.tipo === 'fertilizacion').length;
+            const totalPlagas = eventosData.filter(e => e.tipo === 'plaga').length;
+            const totalFotos = eventosData.filter(e => e.tipo === 'foto').length;
+            
+            const reporte = `
+                REPORTE PIXCAPP
+                =================
+                Fecha: ${new Date().toLocaleDateString()}
+                Agricultor: ${currentUser?.nombre || 'N/A'}
+                Parcela: ${parcelaNombre}
+                Período: ${fechaInicio} - ${fechaFin}
+                
+                RESUMEN DE ACTIVIDAD
+                --------------------
+                Total Riegos: ${totalRiegos}
+                Total Fertilizaciones: ${totalFert}
+                Total Reportes de Plaga: ${totalPlagas}
+                Total Fotos: ${totalFotos}
+                Total Eventos: ${eventosData.length}
+                
+                EVENTOS REGISTRADOS
+                -------------------
+                ${eventosData.map(e => `${formatDate(e.fecha)} | ${e.parcela_nombre || '-'} | ${e.tipo.toUpperCase()} | ${e.descripcion || '-'}`).join('\n')}
+            `;
+            
+            // Simular descarga (en producción se usaría jsPDF)
+            const blob = new Blob([reporte], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `reporte_pixcapp_${new Date().toISOString().slice(0, 19)}.txt`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+            
+            alert('Reporte descargado en formato TXT. (Para PDF se integraría jsPDF)');
+        }
+        
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        function setupFabMenu() {
+            const fabButton = document.getElementById('fabButton');
+            const fabMenu = document.getElementById('fabMenu');
+            
+            if (fabButton && fabMenu) {
+                fabButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    fabMenu.classList.toggle('active');
+                });
+                
+                document.addEventListener('click', (e) => {
+                    if (fabMenu && !fabMenu.contains(e.target) && e.target !== fabButton) {
+                        fabMenu.classList.remove('active');
+                    }
+                });
+            }
+        }
+        
+        async function init() {
+            // Verificar autenticación
+            const isAuthenticated = await checkAuth();
+            if (!isAuthenticated) return;
+            
+            // Actualizar UI del usuario
+            if (currentUser) {
+                document.getElementById('sidebarUserName').textContent = currentUser.nombre;
+                const avatar = document.getElementById('userAvatar');
+                const initials = currentUser.nombre.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+                avatar.innerHTML = currentUser.foto_perfil ? `<img src="../../${currentUser.foto_perfil}">` : initials;
+            }
+            
+            // Sidebar toggle
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+                });
+            }
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                const token = localStorage.getItem('pixcapp_token');
+                if (token) {
+                    try {
+                        await fetch(`${API}/auth/logout.php`, {
+                            method: 'POST',
+                            headers: { 'Authorization': 'Bearer ' + token }
+                        });
+                    } catch (e) {}
+                }
+                clearSession();
+                window.location.href = '../../login.html';
+            });
+            
+            // Estado de conexión
+            updateConnection();
+            window.addEventListener('online', updateConnection);
+            window.addEventListener('offline', updateConnection);
+            
+            // Configurar fechas por defecto (últimos 30 días)
+            const hoy = new Date();
+            const hace30Dias = new Date();
+            hace30Dias.setDate(hoy.getDate() - 30);
+            
+            document.getElementById('fechaFin').value = hoy.toISOString().slice(0, 10);
+            document.getElementById('fechaInicio').value = hace30Dias.toISOString().slice(0, 10);
+            
+            // Eventos
+            document.getElementById('actualizarBtn').addEventListener('click', () => loadReportes());
+            document.getElementById('exportBtn').addEventListener('click', exportPDF);
+            
+            // Cargar datos
+            await loadParcelas();
+            await loadReportes();
+            
+            // FAB menu
+            setupFabMenu();
+        }
+        
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>Configuración - PIXCAPP</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --color-primary: #2E7D32; --color-primary-light: #4CAF50; --color-primary-dark: #1B5E20;
+            --color-background: #F5F7FA; --color-surface: #FFFFFF;
+            --color-text-primary: #1A202C; --color-text-secondary: #2D3748; --color-text-muted: #4A5568;
+            --color-border: #E2E8F0; --color-error: #E53E3E; --color-success: #38A169;
+            --sidebar-width: 260px; --header-height: 56px;
+            --spacing-xs: 0.25rem; --spacing-sm: 0.5rem; --spacing-md: 1rem; --spacing-lg: 1.5rem; --spacing-xl: 2rem;
+            --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem;
+            --transition: all 0.2s ease;
+        }
+        
+        [data-theme="dark"] {
+            --color-primary: #66BB6A; --color-primary-light: #81C784; --color-primary-dark: #388E3C;
+            --color-background: #0F172A; --color-surface: #1E293B;
+            --color-text-primary: #F8FAFC; --color-text-secondary: #E2E8F0; --color-text-muted: #CBD5E1; --color-border: #334155;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--color-background); color: var(--color-text-primary); min-height: 100vh; transition: var(--transition); }
+        .app-container { display: flex; min-height: 100vh; }
+        
+        .sidebar { width: var(--sidebar-width); background: var(--color-surface); border-right: 1px solid var(--color-border); position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; transition: transform 0.3s ease; transform: translateX(0); display: flex; flex-direction: column; }
+        .sidebar.collapsed { transform: translateX(-100%); }
+        .sidebar-header { padding: var(--spacing-lg); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--spacing-md); }
+        .sidebar-logo { height: 34px; width: auto; transition: filter 0.3s ease; }
+        body:not([data-theme="dark"]) .sidebar-logo { filter: brightness(0) invert(0); }
+        [data-theme="dark"] .sidebar-logo { filter: brightness(0) invert(1); }
+        .sidebar-title { font-size: 1.2rem; font-weight: 700; color: var(--color-primary); }
+        .sidebar-user { padding: var(--spacing-lg); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--spacing-md); }
+        .user-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--color-primary-light); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; overflow: hidden; }
+        .user-name { font-weight: 600; font-size: 0.9rem; } .user-role { font-size: 0.7rem; color: var(--color-text-muted); }
+        .sidebar-nav { flex: 1; padding: var(--spacing-md); overflow-y: auto; }
+        .nav-item { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-sm) var(--spacing-md); color: var(--color-text-secondary); text-decoration: none; border-radius: var(--radius-md); transition: var(--transition); margin-bottom: 2px; font-size: 0.9rem; }
+        .nav-item i { width: 20px; font-size: 1.05rem; text-align: center; }
+        .nav-item:hover { background: var(--color-background); color: var(--color-primary); }
+        .sidebar-footer { padding: var(--spacing-lg); border-top: 1px solid var(--color-border); }
+        
+        .main-content { flex: 1; margin-left: var(--sidebar-width); transition: margin-left 0.3s ease; display: flex; flex-direction: column; min-height: 100vh; }
+        .main-content.expanded { margin-left: 0; }
+        
+        .header { background: var(--color-surface); border-bottom: 1px solid var(--color-border); padding: 0 var(--spacing-xl); display: flex; align-items: center; height: var(--header-height); position: sticky; top: 0; z-index: 50; }
+        .header-left { display: flex; align-items: center; gap: var(--spacing-md); flex: 1; }
+        .sidebar-toggle { display: none; background: none; border: none; font-size: 1.3rem; color: var(--color-text-primary); cursor: pointer; padding: var(--spacing-sm); }
+        .back-btn { display: flex; align-items: center; gap: var(--spacing-sm); color: var(--color-text-secondary); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        .mobile-logo { display: none; align-items: center; gap: var(--spacing-sm); }
+        .mobile-logo-img { height: 28px; width: auto; transition: filter 0.3s ease; }
+        body:not([data-theme="dark"]) .mobile-logo-img { filter: brightness(0) invert(0); }
+        [data-theme="dark"] .mobile-logo-img { filter: brightness(0) invert(1); }
+        .mobile-logo-text { font-size: 1.05rem; font-weight: 700; color: var(--color-primary); }
+        .page-title { font-size: 1.2rem; font-weight: 700; }
+        
+        .content { flex: 1; padding: var(--spacing-xl); max-width: 600px; }
+        
+        .card { background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border); padding: var(--spacing-xl); margin-bottom: var(--spacing-xl); }
+        .card-title { font-size: 1rem; font-weight: 600; margin-bottom: var(--spacing-lg); display: flex; align-items: center; gap: var(--spacing-sm); }
+        .card-title i { color: var(--color-primary); }
+        
+        .setting-item { display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md) 0; border-bottom: 1px solid var(--color-border); }
+        .setting-item:last-child { border-bottom: none; }
+        .setting-label { display: flex; align-items: center; gap: var(--spacing-sm); font-size: 0.9rem; color: var(--color-text-secondary); }
+        .setting-label i { color: var(--color-primary); width: 20px; text-align: center; }
+        
+        .theme-options { display: flex; gap: var(--spacing-sm); }
+        .theme-btn { padding: 0.4rem 1rem; background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-secondary); font-size: 0.8rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: var(--spacing-xs); font-family: 'Inter', sans-serif; }
+        .theme-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: white; }
+        .theme-btn:hover { border-color: var(--color-primary); }
+        
+        .toggle-switch { position: relative; width: 48px; height: 26px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: var(--color-border); border-radius: 26px; transition: var(--transition); }
+        .toggle-slider::before { content: ''; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: var(--transition); }
+        .toggle-switch input:checked+.toggle-slider { background: var(--color-primary); }
+        .toggle-switch input:checked+.toggle-slider::before { transform: translateX(22px); }
+        
+        .btn-logout { display: flex; align-items: center; justify-content: center; gap: var(--spacing-sm); width: 100%; padding: var(--spacing-md); background: none; border: 1px solid var(--color-error); color: var(--color-error); border-radius: var(--radius-md); font-weight: 500; cursor: pointer; font-size: 0.9rem; margin-top: var(--spacing-xl); transition: var(--transition); }
+        .btn-logout:hover { background: rgba(229,62,62,0.1); }
+        
+        @media (max-width: 768px) {
+            .sidebar { display: none !important; } .sidebar-toggle { display: none !important; }
+            .main-content { margin-left: 0 !important; }
+            .header { padding: 0 var(--spacing-md); }
+            .mobile-logo { display: flex; } .page-title { display: none; }
+            .content { padding: var(--spacing-md); }
+            .back-btn span { display: none; }
+            .theme-options { flex-wrap: wrap; }
+        }
+        
+        @media (min-width: 769px) { .sidebar-toggle { display: flex; } .mobile-logo { display: none; } .page-title { display: block; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header"><img src="../../assets/img/logo.png" alt="PIXCAPP" class="sidebar-logo"><span class="sidebar-title">PIXCAPP</span></div>
+            <div class="sidebar-user"><div class="user-avatar" id="userAvatar"><i class="fas fa-user"></i></div><div class="user-info"><div class="user-name" id="sidebarUserName">Cargando...</div><div class="user-role">Agricultor</div></div></div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="cultivos.html" class="nav-item"><i class="fas fa-seedling"></i> Mis Cultivos</a>
+                <a href="reportes.html" class="nav-item"><i class="fas fa-chart-bar"></i> Reportes</a>
+                <a href="guia.html" class="nav-item"><i class="fas fa-book"></i> Guía de Cultivos</a>
+                <a href="ingeniero.html" class="nav-item"><i class="fas fa-user-tie"></i> Mi Ingeniero</a>
+                <a href="configuracion.html" class="nav-item"><i class="fas fa-cog"></i> Configuración</a>
+            </nav>
+            <div class="sidebar-footer"><button class="nav-item" id="logoutBtn" style="width:100%;border:none;background:none;cursor:pointer;font-family:Inter,sans-serif;text-align:left;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button></div>
+        </aside>
+        
+        <main class="main-content" id="mainContent">
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                    <a href="perfil.html" class="back-btn"><i class="fas fa-arrow-left"></i> <span>Volver</span></a>
+                    <div class="mobile-logo"><img src="../../assets/img/logo.png" alt="PIXCAPP" class="mobile-logo-img"><span class="mobile-logo-text">PIXCAPP</span></div>
+                    <h1 class="page-title">Configuración</h1>
+                </div>
+            </header>
+            
+            <div class="content">
+                <div class="card">
+                    <h3 class="card-title"><i class="fas fa-palette"></i> Apariencia</h3>
+                    <div class="setting-item">
+                        <span class="setting-label"><i class="fas fa-moon"></i> Tema</span>
+                        <div class="theme-options">
+                            <button class="theme-btn active" data-theme="light" id="themeLight"><i class="fas fa-sun"></i> Claro</button>
+                            <button class="theme-btn" data-theme="dark" id="themeDark"><i class="fas fa-moon"></i> Oscuro</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="fas fa-sync"></i> Sincronización</h3>
+                    <div class="setting-item">
+                        <span class="setting-label"><i class="fas fa-wifi"></i> Solo WiFi</span>
+                        <label class="toggle-switch"><input type="checkbox" id="syncWifi" checked><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label"><i class="fas fa-cloud-upload-alt"></i> Forzar sincronización</span>
+                        <button class="theme-btn" onclick="forceSync()"><i class="fas fa-sync"></i> Sincronizar</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="fas fa-info-circle"></i> Acerca de</h3>
+                    <div class="setting-item"><span class="setting-label"><i class="fas fa-code-branch"></i> Versión</span><span>v1.0 MVP</span></div>
+                    <div class="setting-item"><span class="setting-label"><i class="fas fa-calendar"></i> Proyecto</span><span>Integrador Escolar 2026</span></div>
+                </div>
+                
+                <button class="btn-logout" id="logoutBtn2"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        (function(){ document.body.setAttribute('data-theme',localStorage.getItem('theme')||'light'); })();
+        window.addEventListener('storage',(e)=>{ if(e.key==='theme') document.body.setAttribute('data-theme',e.newValue||'light'); });
+        
+        const API='../../api'; let currentUser=null;
+        
+        function applyTheme(t){
+            document.body.setAttribute('data-theme',t);
+            localStorage.setItem('theme',t);
+            document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active',b.dataset.theme===t));
+        }
+        
+        async function checkAuth(){
+            const t=localStorage.getItem('pixcapp_token'), u=JSON.parse(localStorage.getItem('pixcapp_user')||'{}');
+            if(!t||!u.id){ window.location.href='../../login.html'; return false; }
+            try{ const r=await fetch(`${API}/auth/verify.php`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t}}); const d=await r.json(); if(!d.valid||u.rol!=='agricultor'){ localStorage.clear(); window.location.href='../../login.html'; return false; } currentUser=d.user||u; return true; }
+            catch(e){ return true; }
+        }
+        
+        async function logout(){ const t=localStorage.getItem('pixcapp_token'); if(t) try{ await fetch(`${API}/auth/logout.php`,{method:'POST',headers:{'Authorization':'Bearer '+t}}); }catch(e){} localStorage.clear(); window.location.href='../../login.html'; }
+        
+        function forceSync(){
+            if(!navigator.onLine){ alert('Sin conexión a internet'); return; }
+            const q=JSON.parse(localStorage.getItem('pixcapp_sync_queue')||'[]');
+            if(!q.length){ alert('No hay datos pendientes'); return; }
+            alert(`${q.length} eventos pendientes. Sincronizando...`);
+            // Aquí iría la llamada real a sync.php
+        }
+        
+        async function init(){
+            if(!await checkAuth()) return;
+            if(currentUser){ document.getElementById('sidebarUserName').textContent=currentUser.nombre; const a=document.getElementById('userAvatar'), ini=currentUser.nombre.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(); a.innerHTML=currentUser.foto_perfil?`<img src="../../${currentUser.foto_perfil}">`:ini; }
+            document.getElementById('sidebarToggle').addEventListener('click',()=>{ document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('mainContent').classList.toggle('expanded'); });
+            document.getElementById('logoutBtn').addEventListener('click',logout);
+            document.getElementById('logoutBtn2').addEventListener('click',logout);
+            
+            document.querySelectorAll('.theme-btn').forEach(b=>{ b.addEventListener('click',()=>applyTheme(b.dataset.theme)); });
+            applyTheme(localStorage.getItem('theme')||'light');
+        }
+        
+        init();
+    </script>
+</body>
+</html>

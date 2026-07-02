@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>Guía de Cultivos - PIXCAPP</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --color-primary: #2E7D32; --color-primary-light: #4CAF50; --color-primary-dark: #1B5E20;
+            --color-background: #F5F7FA; --color-surface: #FFFFFF;
+            --color-text-primary: #1A202C; --color-text-secondary: #2D3748; --color-text-muted: #4A5568;
+            --color-border: #E2E8F0; --color-success: #38A169; --color-warning: #ED8936; --color-info: #3182CE;
+            --sidebar-width: 260px; --header-height: 60px; --bottom-nav-height: 65px;
+            --spacing-xs: 0.25rem; --spacing-sm: 0.5rem; --spacing-md: 1rem; --spacing-lg: 1.5rem; --spacing-xl: 2rem;
+            --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem;
+            --transition: all 0.2s ease;
+        }
+        
+        [data-theme="dark"] {
+            --color-primary: #66BB6A; --color-primary-light: #81C784; --color-primary-dark: #388E3C;
+            --color-background: #0F172A; --color-surface: #1E293B;
+            --color-text-primary: #F8FAFC; --color-text-secondary: #E2E8F0; --color-text-muted: #CBD5E1;
+            --color-border: #334155;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--color-background); color: var(--color-text-primary); min-height: 100vh; transition: var(--transition); }
+        .app-container { display: flex; min-height: 100vh; }
+        
+        .sidebar { width: var(--sidebar-width); background: var(--color-surface); border-right: 1px solid var(--color-border); position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; transition: transform 0.3s ease; transform: translateX(0); display: flex; flex-direction: column; }
+        .sidebar.collapsed { transform: translateX(-100%); }
+        .sidebar-header { padding: var(--spacing-lg); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--spacing-md); }
+        .sidebar-logo { height: 34px; width: auto; transition: filter 0.3s ease; }
+        body:not([data-theme="dark"]) .sidebar-logo { filter: brightness(0) invert(0); }
+        [data-theme="dark"] .sidebar-logo { filter: brightness(0) invert(1); }
+        .sidebar-title { font-size: 1.2rem; font-weight: 700; color: var(--color-primary); }
+        .sidebar-user { padding: var(--spacing-lg); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--spacing-md); }
+        .user-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--color-primary-light); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; overflow: hidden; }
+        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .user-name { font-weight: 600; font-size: 0.9rem; } .user-role { font-size: 0.7rem; color: var(--color-text-muted); text-transform: uppercase; }
+        .sidebar-nav { flex: 1; padding: var(--spacing-md); overflow-y: auto; }
+        .nav-item { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-sm) var(--spacing-md); color: var(--color-text-secondary); text-decoration: none; border-radius: var(--radius-md); transition: var(--transition); margin-bottom: 2px; font-size: 0.9rem; }
+        .nav-item i { width: 20px; font-size: 1.05rem; text-align: center; }
+        .nav-item:hover { background: var(--color-background); color: var(--color-primary); }
+        .nav-item.active { background: var(--color-primary); color: white; }
+        .sidebar-footer { padding: var(--spacing-lg); border-top: 1px solid var(--color-border); }
+        
+        .main-content { flex: 1; margin-left: var(--sidebar-width); transition: margin-left 0.3s ease; display: flex; flex-direction: column; min-height: 100vh; }
+        .main-content.expanded { margin-left: 0; }
+        
+        .header { background: var(--color-surface); border-bottom: 1px solid var(--color-border); padding: 0 var(--spacing-xl); display: flex; align-items: center; justify-content: space-between; height: var(--header-height); position: sticky; top: 0; z-index: 50; }
+        .header-left { display: flex; align-items: center; gap: var(--spacing-md); flex: 1; }
+        .sidebar-toggle { display: none; background: none; border: none; font-size: 1.3rem; color: var(--color-text-primary); cursor: pointer; padding: var(--spacing-sm); }
+        .mobile-logo { display: none; align-items: center; gap: var(--spacing-sm); }
+        .mobile-logo-img { height: 28px; width: auto; transition: filter 0.3s ease; }
+        body:not([data-theme="dark"]) .mobile-logo-img { filter: brightness(0) invert(0); }
+        [data-theme="dark"] .mobile-logo-img { filter: brightness(0) invert(1); }
+        .mobile-logo-text { font-size: 1.05rem; font-weight: 700; color: var(--color-primary); }
+        .page-title { font-size: 1.2rem; font-weight: 700; }
+        
+        .content { flex: 1; padding: var(--spacing-xl); }
+        .tabs { display: flex; gap: var(--spacing-xs); border-bottom: 2px solid var(--color-border); margin-bottom: var(--spacing-xl); overflow-x: auto; }
+        .tab { padding: var(--spacing-sm) var(--spacing-lg); font-size: 0.9rem; font-weight: 500; color: var(--color-text-muted); background: none; border: none; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: var(--transition); }
+        .tab:hover { color: var(--color-primary); }
+        .tab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); font-weight: 600; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .card { background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border); padding: var(--spacing-xl); margin-bottom: var(--spacing-xl); }
+        .card-title { font-size: 1rem; font-weight: 600; margin-bottom: var(--spacing-lg); display: flex; align-items: center; gap: var(--spacing-sm); }
+        .card-title i { color: var(--color-primary); }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--spacing-lg); }
+        .info-item { padding: var(--spacing-md); background: var(--color-background); border-radius: var(--radius-md); }
+        .info-label { font-size: 0.7rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--spacing-xs); }
+        .info-value { font-size: 0.95rem; font-weight: 600; }
+        .plaga-card { display: flex; gap: var(--spacing-md); padding: var(--spacing-lg); background: var(--color-background); border-radius: var(--radius-md); margin-bottom: var(--spacing-md); }
+        .plaga-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--color-warning); display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+        .plaga-info { flex: 1; } .plaga-info h4 { font-size: 0.95rem; margin-bottom: var(--spacing-xs); } .plaga-info p { font-size: 0.8rem; color: var(--color-text-secondary); }
+        .etapa-timeline { display: flex; flex-wrap: wrap; gap: var(--spacing-md); }
+        .etapa-card { flex: 1; min-width: 120px; text-align: center; padding: var(--spacing-md); background: var(--color-background); border-radius: var(--radius-md); }
+        .etapa-dia { font-size: 0.7rem; color: var(--color-text-muted); margin-bottom: var(--spacing-xs); }
+        .etapa-nombre { font-weight: 600; font-size: 0.85rem; }
+        
+        .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom-nav-height); background: var(--color-surface); border-top: 1px solid var(--color-border); z-index: 100; }
+        .bottom-nav-items { display: flex; align-items: center; justify-content: space-around; height: 100%; max-width: 500px; margin: 0 auto; }
+        .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--color-text-muted); text-decoration: none; font-size: 0.68rem; }
+        .bottom-nav-item i { font-size: 1.15rem; }
+        .bottom-nav-item.active { color: var(--color-primary); }
+        
+        @media (max-width: 768px) {
+            .sidebar { display: none !important; } .sidebar-toggle { display: none !important; }
+            .main-content { margin-left: 0 !important; padding-bottom: var(--bottom-nav-height); }
+            .header { padding: 0 var(--spacing-md); }
+            .mobile-logo { display: flex; } .page-title { display: none; }
+            .content { padding: var(--spacing-md); }
+            .info-grid { grid-template-columns: 1fr 1fr; }
+            .bottom-nav { display: block; }
+        }
+        @media (min-width: 769px) { .sidebar-toggle { display: flex; } .mobile-logo { display: none; } .page-title { display: block; } .bottom-nav { display: none !important; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header"><img src="../../assets/img/logo.png" alt="PIXCAPP" class="sidebar-logo"><span class="sidebar-title">PIXCAPP</span></div>
+            <div class="sidebar-user"><div class="user-avatar" id="userAvatar"><i class="fas fa-user-tie"></i></div><div class="user-info"><div class="user-name" id="sidebarUserName">Cargando...</div><div class="user-role">Ingeniero</div></div></div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="solicitudes.html" class="nav-item"><i class="fas fa-bell"></i> Solicitudes</a>
+                <a href="productores.html" class="nav-item"><i class="fas fa-users"></i> Mis Productores</a>
+                <a href="guia.html" class="nav-item active"><i class="fas fa-book"></i> Guía de Cultivos</a>
+                <a href="configuracion.html" class="nav-item"><i class="fas fa-cog"></i> Configuración</a>
+            </nav>
+            <div class="sidebar-footer"><button class="nav-item" id="logoutBtn" style="width:100%;border:none;background:none;cursor:pointer;font-family:Inter,sans-serif;text-align:left;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button></div>
+        </aside>
+        
+        <main class="main-content" id="mainContent">
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                    <div class="mobile-logo"><img src="../../assets/img/logo.png" alt="PIXCAPP" class="mobile-logo-img"><span class="mobile-logo-text">PIXCAPP</span></div>
+                    <h1 class="page-title">Guía de Cultivos</h1>
+                </div>
+            </header>
+            
+            <div class="content">
+                <div class="tabs">
+                    <button class="tab active" data-tab="general">📋 General</button>
+                    <button class="tab" data-tab="plagas">🐛 Plagas</button>
+                    <button class="tab" data-tab="manejo">💧 Manejo</button>
+                    <button class="tab" data-tab="ciclo">🌱 Ciclo</button>
+                </div>
+                
+                <div class="tab-content active" id="tab-general">
+                    <div class="card"><h2 class="card-title"><i class="fas fa-leaf"></i> Clasificación Taxonómica</h2><div class="info-grid"><div class="info-item"><div class="info-label">Reino</div><div class="info-value">Plantae</div></div><div class="info-item"><div class="info-label">División</div><div class="info-value">Magnoliophyta</div></div><div class="info-item"><div class="info-label">Clase</div><div class="info-value">Liliopsida</div></div><div class="info-item"><div class="info-label">Orden</div><div class="info-value">Poales</div></div><div class="info-item"><div class="info-label">Familia</div><div class="info-value">Poaceae</div></div><div class="info-item"><div class="info-label">Género</div><div class="info-value">Zea</div></div><div class="info-item"><div class="info-label">Especie</div><div class="info-value">Zea mays</div></div></div></div>
+                    <div class="card"><h2 class="card-title"><i class="fas fa-certificate"></i> Variedades</h2><div class="plaga-card"><div class="plaga-icon"><i class="fas fa-seedling"></i></div><div class="plaga-info"><h4>Blanco Criollo</h4><p>Ciclo: 120-150 días • Altura: 2.0-2.5 m</p></div></div><div class="plaga-card"><div class="plaga-icon"><i class="fas fa-seedling"></i></div><div class="plaga-info"><h4>Amarillo Híbrido</h4><p>Ciclo: 100-120 días • Altura: 2.2-2.8 m</p></div></div><div class="plaga-card"><div class="plaga-icon"><i class="fas fa-seedling"></i></div><div class="plaga-info"><h4>Azul Criollo</h4><p>Ciclo: 130-160 días • Altura: 1.8-2.2 m</p></div></div></div>
+                    <div class="card"><h2 class="card-title"><i class="fas fa-thermometer-half"></i> Requerimientos</h2><div class="info-grid"><div class="info-item"><div class="info-label">pH del suelo</div><div class="info-value">5.5 - 7.0</div></div><div class="info-item"><div class="info-label">Temperatura</div><div class="info-value">18°C - 32°C</div></div><div class="info-item"><div class="info-label">Altitud</div><div class="info-value">0 - 2,500 msnm</div></div><div class="info-item"><div class="info-label">Precipitación</div><div class="info-value">500 - 800 mm</div></div></div></div>
+                </div>
+                
+                <div class="tab-content" id="tab-plagas">
+                    <div class="card"><h2 class="card-title"><i class="fas fa-bug"></i> Plagas Comunes</h2><div class="plaga-card"><div class="plaga-icon"><i class="fas fa-bug"></i></div><div class="plaga-info"><h4>Gusano cogollero</h4><p>Síntomas: Hojas perforadas, excremento en cogollo. Control: Bacillus thuringiensis (2-3 kg/ha)</p></div></div><div class="plaga-card"><div class="plaga-icon"><i class="fas fa-bug"></i></div><div class="plaga-info"><h4>Gallina ciega</h4><p>Síntomas: Marchitez, raíces dañadas. Control: Rotación de cultivos, control biológico</p></div></div><div class="plaga-card"><div class="plaga-icon"><i class="fas fa-spider"></i></div><div class="plaga-info"><h4>Araña roja</h4><p>Síntomas: Puntos amarillos, telarañas. Control: Aceite de neem, azufre</p></div></div></div>
+                    <div class="card"><h2 class="card-title"><i class="fas fa-disease"></i> Enfermedades</h2><div class="plaga-card"><div class="plaga-icon"><i class="fas fa-leaf" style="color:var(--color-warning);"></i></div><div class="plaga-info"><h4>Roya común</h4><p>Pústulas naranja en hojas. Control: Fungicidas, variedades resistentes</p></div></div><div class="plaga-card"><div class="plaga-icon"><i class="fas fa-leaf" style="color:var(--color-warning);"></i></div><div class="plaga-info"><h4>Tizón foliar</h4><p>Manchas alargadas. Control: Rotación, fungicidas</p></div></div></div>
+                </div>
+                
+                <div class="tab-content" id="tab-manejo">
+                    <div class="card"><h2 class="card-title"><i class="fas fa-tint"></i> Recomendaciones de Riego</h2><div class="info-grid"><div class="info-item"><div class="info-label">VE-V6</div><div class="info-value">20-25 mm/sem</div></div><div class="info-item"><div class="info-label">V6-V12</div><div class="info-value">30-35 mm/sem</div></div><div class="info-item"><div class="info-label">V12-R1</div><div class="info-value">40-45 mm/sem</div></div><div class="info-item"><div class="info-label">R1-R6</div><div class="info-value">35-40 mm/sem</div></div></div></div>
+                    <div class="card"><h2 class="card-title"><i class="fas fa-flask"></i> Fertilización</h2><div class="info-grid"><div class="info-item"><div class="info-label">Siembra</div><div class="info-value">N:60, P:40 kg/ha</div></div><div class="info-item"><div class="info-label">Etapa V6</div><div class="info-value">N:80 kg/ha</div></div><div class="info-item"><div class="info-label">Etapa V12</div><div class="info-value">N:60 kg/ha</div></div></div></div>
+                </div>
+                
+                <div class="tab-content" id="tab-ciclo">
+                    <div class="card"><h2 class="card-title"><i class="fas fa-calendar-alt"></i> Etapas Fenológicas</h2><div class="etapa-timeline"><div class="etapa-card"><div class="etapa-dia">5-7 días</div><div class="etapa-nombre">VE</div></div><div class="etapa-card"><div class="etapa-dia">25-30 días</div><div class="etapa-nombre">V6</div></div><div class="etapa-card"><div class="etapa-dia">40-45 días</div><div class="etapa-nombre">V12</div></div><div class="etapa-card"><div class="etapa-dia">55-60 días</div><div class="etapa-nombre">VT</div></div><div class="etapa-card"><div class="etapa-dia">60-65 días</div><div class="etapa-nombre">R1</div></div><div class="etapa-card"><div class="etapa-dia">90-100 días</div><div class="etapa-nombre">R5</div></div><div class="etapa-card"><div class="etapa-dia">100-150 días</div><div class="etapa-nombre">R6</div></div></div></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <nav class="bottom-nav">
+        <div class="bottom-nav-items">
+            <a href="dashboard.html" class="bottom-nav-item"><i class="fas fa-home"></i><span>Inicio</span></a>
+            <a href="solicitudes.html" class="bottom-nav-item"><i class="fas fa-bell"></i><span>Solicitudes</span></a>
+            <a href="productores.html" class="bottom-nav-item"><i class="fas fa-users"></i><span>Productores</span></a>
+            <a href="configuracion.html" class="bottom-nav-item"><i class="fas fa-cog"></i><span>Config.</span></a>
+        </div>
+    </nav>
+    
+    <script>
+        (function(){ document.body.setAttribute('data-theme',localStorage.getItem('theme')||'light'); })();
+        window.addEventListener('storage',(e)=>{ if(e.key==='theme') document.body.setAttribute('data-theme',e.newValue||'light'); });
+        
+        const API='../../api'; let currentUser=null;
+        
+        async function checkAuth(){
+            const t=localStorage.getItem('pixcapp_token'), u=JSON.parse(localStorage.getItem('pixcapp_user')||'{}');
+            if(!t||!u.id){ window.location.href='../../login.html'; return false; }
+            try{ const r=await fetch(`${API}/auth/verify.php`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t}}); const d=await r.json(); if(!d.valid||u.rol!=='ingeniero'){ localStorage.clear(); window.location.href='../../login.html'; return false; } currentUser=d.user||u; return true; }
+            catch(e){ return true; }
+        }
+        
+        async function init(){
+            if(!await checkAuth()) return;
+            if(currentUser){ document.getElementById('sidebarUserName').textContent=currentUser.nombre; const a=document.getElementById('userAvatar'), ini=currentUser.nombre.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(); a.innerHTML=currentUser.foto_perfil?`<img src="../../${currentUser.foto_perfil}">`:ini; }
+            document.getElementById('sidebarToggle').addEventListener('click',()=>{ document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('mainContent').classList.toggle('expanded'); });
+            document.getElementById('logoutBtn').addEventListener('click',async()=>{ const t=localStorage.getItem('pixcapp_token'); if(t) try{ await fetch(`${API}/auth/logout.php`,{method:'POST',headers:{'Authorization':'Bearer '+t}}); }catch(e){} localStorage.clear(); window.location.href='../../login.html'; });
+            document.querySelectorAll('.tab').forEach(t=>{ t.addEventListener('click',()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active')); document.getElementById('tab-'+t.dataset.tab).classList.add('active'); }); });
+        }
+        init();
+    </script>
+</body>
+</html>

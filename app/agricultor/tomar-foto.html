@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>Tomar Foto - PIXCAPP</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --color-primary: #2E7D32; --color-primary-dark: #1B5E20; --color-primary-light: #4CAF50;
+            --color-background: #F5F7FA; --color-surface: #FFFFFF;
+            --color-text-primary: #1A202C; --color-text-secondary: #2D3748; --color-text-muted: #4A5568;
+            --color-border: #E2E8F0; --color-error: #E53E3E; --color-success: #38A169;
+            --sidebar-width: 260px; --header-height: 56px;
+            --spacing-sm: 0.5rem; --spacing-md: 1rem; --spacing-lg: 1.5rem; --spacing-xl: 2rem;
+            --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem;
+            --transition: all 0.2s ease;
+        }
+        
+        [data-theme="dark"] {
+            --color-primary: #66BB6A; --color-primary-dark: #388E3C; --color-primary-light: #81C784;
+            --color-background: #0F172A; --color-surface: #1E293B;
+            --color-text-primary: #F8FAFC; --color-text-secondary: #E2E8F0; --color-text-muted: #CBD5E1;
+            --color-border: #334155;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--color-background); color: var(--color-text-primary); min-height: 100vh; transition: var(--transition); }
+        .app-container { display: flex; min-height: 100vh; }
+        
+        .sidebar { width: var(--sidebar-width); background: var(--color-surface); border-right: 1px solid var(--color-border); position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; transition: transform 0.3s ease; transform: translateX(0); display: flex; flex-direction: column; }
+        .sidebar.collapsed { transform: translateX(-100%); }
+        .sidebar-header { padding: var(--spacing-lg); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--spacing-md); }
+        .sidebar-logo { height: 34px; width: auto; transition: filter 0.3s ease; }
+        body:not([data-theme="dark"]) .sidebar-logo { filter: brightness(0) invert(0); }
+        [data-theme="dark"] .sidebar-logo { filter: brightness(0) invert(1); }
+        .sidebar-title { font-size: 1.2rem; font-weight: 700; color: var(--color-primary); }
+        .sidebar-user { padding: var(--spacing-lg); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--spacing-md); }
+        .user-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--color-primary-light); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; overflow: hidden; }
+        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .user-name { font-weight: 600; font-size: 0.9rem; } .user-role { font-size: 0.7rem; color: var(--color-text-muted); }
+        .sidebar-nav { flex: 1; padding: var(--spacing-md); overflow-y: auto; }
+        .nav-item { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-sm) var(--spacing-md); color: var(--color-text-secondary); text-decoration: none; border-radius: var(--radius-md); transition: var(--transition); margin-bottom: 2px; font-size: 0.9rem; }
+        .nav-item i { width: 20px; font-size: 1.05rem; text-align: center; }
+        .nav-item:hover { background: var(--color-background); color: var(--color-primary); }
+        .sidebar-footer { padding: var(--spacing-lg); border-top: 1px solid var(--color-border); }
+        
+        .main-content { flex: 1; margin-left: var(--sidebar-width); transition: margin-left 0.3s ease; display: flex; flex-direction: column; min-height: 100vh; }
+        .main-content.expanded { margin-left: 0; }
+        
+        .header { background: var(--color-surface); border-bottom: 1px solid var(--color-border); padding: 0 var(--spacing-xl); display: flex; align-items: center; height: var(--header-height); position: sticky; top: 0; z-index: 50; }
+        .header-left { display: flex; align-items: center; gap: var(--spacing-md); flex: 1; }
+        .sidebar-toggle { display: none; background: none; border: none; font-size: 1.3rem; color: var(--color-text-primary); cursor: pointer; padding: var(--spacing-sm); }
+        .back-btn { display: flex; align-items: center; gap: var(--spacing-sm); color: var(--color-text-secondary); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        .back-btn:hover { color: var(--color-primary); }
+        .mobile-logo { display: none; align-items: center; gap: var(--spacing-sm); }
+        .mobile-logo-img { height: 28px; width: auto; transition: filter 0.3s ease; }
+        body:not([data-theme="dark"]) .mobile-logo-img { filter: brightness(0) invert(0); }
+        [data-theme="dark"] .mobile-logo-img { filter: brightness(0) invert(1); }
+        .mobile-logo-text { font-size: 1.05rem; font-weight: 700; color: var(--color-primary); }
+        .page-title { font-size: 1.2rem; font-weight: 700; }
+        
+        .content { flex: 1; padding: var(--spacing-xl); }
+        .content-wrapper { max-width: 500px; margin: 0 auto; }
+        
+        .form-card { background: var(--color-surface); border-radius: var(--radius-xl); border: 1px solid var(--color-border); padding: var(--spacing-xl); margin-bottom: var(--spacing-xl); }
+        .section-title { font-size: 1rem; font-weight: 600; margin-bottom: var(--spacing-lg); display: flex; align-items: center; gap: var(--spacing-sm); }
+        .section-title i { color: var(--color-primary); }
+        .form-group { margin-bottom: var(--spacing-lg); }
+        .form-label { display: flex; align-items: center; gap: var(--spacing-sm); font-weight: 500; color: var(--color-text-secondary); margin-bottom: var(--spacing-sm); font-size: 0.85rem; }
+        .form-label i { color: var(--color-primary); width: 16px; }
+        .input-wrapper { position: relative; }
+        .input-icon { position: absolute; left: var(--spacing-md); top: 50%; transform: translateY(-50%); color: var(--color-text-muted); z-index: 1; }
+        .form-input { width: 100%; padding: 0.7rem var(--spacing-md) 0.7rem 2.5rem; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: var(--color-text-primary); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--radius-md); transition: var(--transition); }
+        .form-input:focus { outline: none; border-color: var(--color-primary); }
+        select.form-input { cursor: pointer; } textarea.form-input { resize: vertical; min-height: 60px; }
+        
+        .photo-preview { width: 100%; aspect-ratio: 4/3; border-radius: var(--radius-lg); background: var(--color-background); border: 2px dashed var(--color-border); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; gap: var(--spacing-sm); }
+        .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-preview i { font-size: 2.5rem; color: var(--color-text-muted); }
+        .photo-preview span { font-size: 0.9rem; color: var(--color-text-muted); }
+        
+        .form-actions { display: flex; justify-content: flex-end; gap: var(--spacing-md); padding-top: var(--spacing-lg); border-top: 1px solid var(--color-border); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--spacing-sm); padding: 0.65rem 1.5rem; font-size: 0.9rem; font-weight: 600; border: none; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); min-width: 120px; }
+        .btn-primary { background: var(--color-primary); color: white; } .btn-primary:hover { background: var(--color-primary-dark); } .btn-primary:disabled { opacity: 0.6; }
+        .btn-secondary { background: transparent; color: var(--color-text-secondary); border: 1px solid var(--color-border); } .btn-secondary:hover { background: var(--color-background); }
+        
+        .alert { padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg); display: flex; align-items: center; gap: var(--spacing-md); font-size: 0.85rem; }
+        .alert-error { background: rgba(229,62,62,0.1); border: 1px solid var(--color-error); color: var(--color-error); }
+        .alert-success { background: rgba(56,161,105,0.1); border: 1px solid var(--color-success); color: var(--color-success); }
+        
+        .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        @media (max-width: 768px) {
+            .sidebar { display: none !important; } .sidebar-toggle { display: none !important; }
+            .main-content { margin-left: 0 !important; }
+            .header { padding: 0 var(--spacing-md); }
+            .mobile-logo { display: flex; } .page-title { display: none; }
+            .content { padding: var(--spacing-md); } .form-card { padding: var(--spacing-lg); }
+            .form-actions { flex-direction: column; } .btn { width: 100%; }
+            .back-btn span { display: none; }
+        }
+        
+        @media (min-width: 769px) { .sidebar-toggle { display: flex; } .mobile-logo { display: none; } .page-title { display: block; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header"><img src="../../assets/img/logo.png" alt="PIXCAPP" class="sidebar-logo"><span class="sidebar-title">PIXCAPP</span></div>
+            <div class="sidebar-user"><div class="user-avatar" id="userAvatar"><i class="fas fa-user"></i></div><div class="user-info"><div class="user-name" id="sidebarUserName">Cargando...</div><div class="user-role">Agricultor</div></div></div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="cultivos.html" class="nav-item"><i class="fas fa-seedling"></i> Mis Cultivos</a>
+                <a href="reportes.html" class="nav-item"><i class="fas fa-chart-bar"></i> Reportes</a>
+                <a href="guia.html" class="nav-item"><i class="fas fa-book"></i> Guía de Cultivos</a>
+                <a href="ingeniero.html" class="nav-item"><i class="fas fa-user-tie"></i> Mi Ingeniero</a>
+                <a href="configuracion.html" class="nav-item"><i class="fas fa-cog"></i> Configuración</a>
+            </nav>
+            <div class="sidebar-footer"><button class="nav-item" id="logoutBtn" style="width:100%;border:none;background:none;cursor:pointer;font-family:Inter,sans-serif;text-align:left;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button></div>
+        </aside>
+        
+        <main class="main-content" id="mainContent">
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                    <a href="cultivos.html" class="back-btn"><i class="fas fa-arrow-left"></i> <span>Volver</span></a>
+                    <div class="mobile-logo"><img src="../../assets/img/logo.png" alt="PIXCAPP" class="mobile-logo-img"><span class="mobile-logo-text">PIXCAPP</span></div>
+                    <h1 class="page-title">Tomar Foto</h1>
+                </div>
+            </header>
+            
+            <div class="content">
+                <div class="content-wrapper">
+                    <div id="alertContainer"></div>
+                    
+                    <form id="fotoForm">
+                        <div class="form-card">
+                            <h2 class="section-title"><i class="fas fa-camera"></i> Capturar Foto</h2>
+                            
+                            <div class="photo-preview" id="photoPreview" onclick="document.getElementById('foto').click()">
+                                <i class="fas fa-camera"></i>
+                                <span>Tocar para tomar foto</span>
+                            </div>
+                            <input type="file" id="foto" accept="image/*" capture="environment" style="display:none;">
+                            <div class="error-message" id="fotoError"></div>
+                            
+                            <div class="form-group" style="margin-top:var(--spacing-lg);">
+                                <label class="form-label" for="parcela_id"><i class="fas fa-seedling"></i> Parcela <span class="required">*</span></label>
+                                <div class="input-wrapper"><i class="fas fa-map-marker-alt input-icon"></i><select id="parcela_id" class="form-input" required><option value="">Selecciona una parcela</option></select></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="descripcion"><i class="fas fa-pen"></i> Descripción</label>
+                                <textarea id="descripcion" class="form-input" rows="2" placeholder="Describe la foto..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="history.back()"><i class="fas fa-times"></i> Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-save"></i> Guardar Foto</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        (function(){ document.body.setAttribute('data-theme',localStorage.getItem('theme')||'light'); })();
+        window.addEventListener('storage',(e)=>{ if(e.key==='theme') document.body.setAttribute('data-theme',e.newValue||'light'); });
+        
+        const API='../../api'; let currentUser=null, fotoBase64=null;
+        const urlParams=new URLSearchParams(window.location.search);
+        const parcelaPreseleccionada=urlParams.get('parcela');
+        
+        async function checkAuth(){
+            const t=localStorage.getItem('pixcapp_token'), u=JSON.parse(localStorage.getItem('pixcapp_user')||'{}');
+            if(!t||!u.id){ window.location.href='../../login.html'; return false; }
+            try{ const r=await fetch(`${API}/auth/verify.php`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t}}); const d=await r.json(); if(!d.valid||u.rol!=='agricultor'){ localStorage.clear(); window.location.href='../../login.html'; return false; } currentUser=d.user||u; return true; }
+            catch(e){ return true; }
+        }
+        
+        async function init(){
+            if(!await checkAuth()) return;
+            if(currentUser){ document.getElementById('sidebarUserName').textContent=currentUser.nombre; const a=document.getElementById('userAvatar'), ini=currentUser.nombre.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(); a.innerHTML=currentUser.foto_perfil?`<img src="../../${currentUser.foto_perfil}">`:ini; }
+            document.getElementById('sidebarToggle').addEventListener('click',()=>{ document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('mainContent').classList.toggle('expanded'); });
+            document.getElementById('logoutBtn').addEventListener('click',async()=>{ const t=localStorage.getItem('pixcapp_token'); if(t) try{ await fetch(`${API}/auth/logout.php`,{method:'POST',headers:{'Authorization':'Bearer '+t}}); }catch(e){} localStorage.clear(); window.location.href='../../login.html'; });
+            
+            const fi=document.getElementById('foto'), pp=document.getElementById('photoPreview');
+            fi.addEventListener('change',(e)=>{ const f=e.target.files[0]; if(f){ if(f.size>5242880){ showAlert('Máximo 5MB','error'); return; } const r=new FileReader(); r.onload=(ev)=>{ pp.innerHTML=`<img src="${ev.target.result}" alt="Foto">`; fotoBase64=ev.target.result; }; r.readAsDataURL(f); } });
+            
+            await loadParcelas();
+        }
+        
+        async function loadParcelas(){
+            const s=document.getElementById('parcela_id'), token=localStorage.getItem('pixcapp_token');
+            try{ const r=await fetch(`${API}/parcelas/listar.php`,{headers:{'Authorization':'Bearer '+token}}); const d=await r.json(); if(d.success) d.parcelas.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=p.nombre; if(parcelaPreseleccionada&&p.id==parcelaPreseleccionada) o.selected=true; s.appendChild(o); }); }
+            catch(e){ const cc=JSON.parse(localStorage.getItem('pixcapp_cultivos')||'[]'); cc.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=p.nombre; if(parcelaPreseleccionada&&p.id==parcelaPreseleccionada) o.selected=true; s.appendChild(o); }); }
+        }
+        
+        function showAlert(m,t='error'){ const c=document.getElementById('alertContainer'), i=t==='error'?'fa-exclamation-circle':'fa-check-circle'; c.innerHTML=`<div class="alert alert-${t}"><i class="fas ${i}"></i><span>${m}</span></div>`; if(t!=='error') setTimeout(()=>c.innerHTML='',4000); }
+        
+        document.getElementById('fotoForm').addEventListener('submit',async(e)=>{
+            e.preventDefault();
+            const parcela=document.getElementById('parcela_id').value;
+            if(!fotoBase64){ document.getElementById('fotoError').textContent='Debes tomar una foto'; return; }
+            document.getElementById('fotoError').textContent='';
+            if(!parcela){ showAlert('Selecciona una parcela','error'); return; }
+            
+            const token=localStorage.getItem('pixcapp_token'), btn=document.getElementById('submitBtn'), orig=btn.innerHTML;
+            btn.innerHTML='<span class="spinner"></span> Guardando...'; btn.disabled=true;
+            
+            const datos={descripcion:document.getElementById('descripcion').value.trim()};
+            const fd={parcela_id:parcela,tipo:'foto',datos:JSON.stringify(datos),foto:fotoBase64};
+            
+            try{
+                const r=await fetch(`${API}/eventos/registrar.php`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(fd)});
+                const d=await r.json();
+                if(d.success){ showAlert('¡Foto guardada!','success'); setTimeout(()=>history.back(),1500); }
+                else { showAlert(d.message||'Error','error'); btn.innerHTML=orig; btn.disabled=false; }
+            }catch(er){
+                if(!navigator.onLine){ const sq=JSON.parse(localStorage.getItem('pixcapp_sync_queue')||'[]'); sq.push({tipo:'foto',descripcion:'Foto',datos:fd,fecha:new Date().toISOString()}); localStorage.setItem('pixcapp_sync_queue',JSON.stringify(sq)); showAlert('Guardado localmente','success'); setTimeout(()=>history.back(),1500); }
+                else { showAlert('Error de conexión','error'); btn.innerHTML=orig; btn.disabled=false; }
+            }
+        });
+        
+        init();
+    </script>
+</body>
+</html>

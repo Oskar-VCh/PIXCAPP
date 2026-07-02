@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>Productor - PIXCAPP Ingeniero</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --color-primary: #2E7D32; --color-primary-light: #4CAF50; --color-primary-dark: #1B5E20;
+            --color-background: #F5F7FA; --color-surface: #FFFFFF;
+            --color-text-primary: #1A202C; --color-text-secondary: #2D3748; --color-text-muted: #4A5568;
+            --color-border: #E2E8F0; --color-error: #E53E3E; --color-success: #38A169; --color-warning: #ED8936;
+            --sidebar-width: 260px; --header-height: 56px;
+            --spacing-sm: 0.5rem; --spacing-md: 1rem; --spacing-lg: 1.5rem; --spacing-xl: 2rem;
+            --radius-md: 0.5rem; --radius-lg: 0.75rem;
+            --transition: all 0.2s ease;
+        }
+        
+        [data-theme="dark"] {
+            --color-primary: #66BB6A; --color-primary-light: #81C784; --color-primary-dark: #388E3C;
+            --color-background: #0F172A; --color-surface: #1E293B;
+            --color-text-primary: #F8FAFC; --color-text-secondary: #E2E8F0; --color-text-muted: #CBD5E1; --color-border: #334155;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--color-background); color: var(--color-text-primary); min-height: 100vh; transition: var(--transition); }
+        .app-container { display: flex; min-height: 100vh; }
+        
+        .sidebar { width: var(--sidebar-width); background: var(--color-surface); border-right: 1px solid var(--color-border); position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; transition: transform 0.3s ease; transform: translateX(0); display: flex; flex-direction: column; }
+        .sidebar.collapsed { transform: translateX(-100%); }
+        .sidebar-header { padding: var(--spacing-lg); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--spacing-md); }
+        .sidebar-logo { height: 34px; width: auto; transition: filter 0.3s ease; }
+        body:not([data-theme="dark"]) .sidebar-logo { filter: brightness(0) invert(0); }
+        [data-theme="dark"] .sidebar-logo { filter: brightness(0) invert(1); }
+        .sidebar-title { font-size: 1.2rem; font-weight: 700; color: var(--color-primary); }
+        .sidebar-user { padding: var(--spacing-lg); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--spacing-md); }
+        .user-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--color-primary-light); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; overflow: hidden; }
+        .user-name { font-weight: 600; font-size: 0.9rem; } .user-role { font-size: 0.7rem; color: var(--color-text-muted); }
+        .sidebar-nav { flex: 1; padding: var(--spacing-md); overflow-y: auto; }
+        .nav-item { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-sm) var(--spacing-md); color: var(--color-text-secondary); text-decoration: none; border-radius: var(--radius-md); transition: var(--transition); margin-bottom: 2px; font-size: 0.9rem; }
+        .nav-item i { width: 20px; font-size: 1.05rem; text-align: center; }
+        .nav-item:hover { background: var(--color-background); color: var(--color-primary); }
+        .sidebar-footer { padding: var(--spacing-lg); border-top: 1px solid var(--color-border); }
+        
+        .main-content { flex: 1; margin-left: var(--sidebar-width); transition: margin-left 0.3s ease; display: flex; flex-direction: column; min-height: 100vh; }
+        .main-content.expanded { margin-left: 0; }
+        
+        .header { background: var(--color-surface); border-bottom: 1px solid var(--color-border); padding: 0 var(--spacing-xl); display: flex; align-items: center; height: var(--header-height); position: sticky; top: 0; z-index: 50; }
+        .header-left { display: flex; align-items: center; gap: var(--spacing-md); flex: 1; }
+        .sidebar-toggle { display: none; background: none; border: none; font-size: 1.3rem; color: var(--color-text-primary); cursor: pointer; padding: var(--spacing-sm); }
+        .back-btn { display: flex; align-items: center; gap: var(--spacing-sm); color: var(--color-text-secondary); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        .mobile-logo { display: none; align-items: center; gap: var(--spacing-sm); }
+        .mobile-logo-img { height: 28px; width: auto; transition: filter 0.3s ease; }
+        body:not([data-theme="dark"]) .mobile-logo-img { filter: brightness(0) invert(0); }
+        [data-theme="dark"] .mobile-logo-img { filter: brightness(0) invert(1); }
+        .mobile-logo-text { font-size: 1.05rem; font-weight: 700; color: var(--color-primary); }
+        .page-title { font-size: 1.2rem; font-weight: 700; }
+        
+        .content { flex: 1; padding: var(--spacing-xl); max-width: 700px; }
+        
+        .card { background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border); padding: var(--spacing-lg); margin-bottom: var(--spacing-xl); }
+        .section-title { font-size: 1rem; font-weight: 600; margin-bottom: var(--spacing-lg); display: flex; align-items: center; gap: var(--spacing-sm); }
+        .section-title i { color: var(--color-primary); }
+        
+        .parcela-item { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--color-background); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm); cursor: pointer; transition: var(--transition); }
+        .parcela-item:hover { background: var(--color-primary); color: white; }
+        .parcela-item:hover .parcela-meta { color: rgba(255,255,255,0.8); }
+        .parcela-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--color-primary-light); display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+        .parcela-info { flex: 1; } .parcela-info h4 { font-size: 0.9rem; }
+        .parcela-meta { font-size: 0.75rem; color: var(--color-text-muted); }
+        
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--spacing-sm); padding: 0.6rem 1.25rem; font-size: 0.85rem; font-weight: 600; border: none; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); background: var(--color-primary); color: white; }
+        .btn:hover { background: var(--color-primary-dark); }
+        
+        .recomendacion-box { margin-top: var(--spacing-lg); }
+        .recomendacion-box textarea { width: 100%; padding: var(--spacing-md); font-family: 'Inter', sans-serif; font-size: 0.9rem; color: var(--color-text-primary); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--radius-md); resize: vertical; min-height: 80px; }
+        .recomendacion-box textarea:focus { outline: none; border-color: var(--color-primary); }
+        
+        @media (max-width: 768px) {
+            .sidebar { display: none !important; } .sidebar-toggle { display: none !important; }
+            .main-content { margin-left: 0 !important; }
+            .header { padding: 0 var(--spacing-md); }
+            .mobile-logo { display: flex; } .page-title { display: none; }
+            .content { padding: var(--spacing-md); }
+            .back-btn span { display: none; }
+        }
+        
+        @media (min-width: 769px) { .sidebar-toggle { display: flex; } .mobile-logo { display: none; } .page-title { display: block; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header"><img src="../../assets/img/logo.png" alt="PIXCAPP" class="sidebar-logo"><span class="sidebar-title">PIXCAPP</span></div>
+            <div class="sidebar-user"><div class="user-avatar" id="userAvatar"><i class="fas fa-user-tie"></i></div><div class="user-info"><div class="user-name" id="sidebarUserName">Cargando...</div><div class="user-role">Ingeniero</div></div></div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="solicitudes.html" class="nav-item"><i class="fas fa-bell"></i> Solicitudes</a>
+                <a href="productores.html" class="nav-item"><i class="fas fa-users"></i> Mis Productores</a>
+                <a href="taxonomia.html" class="nav-item"><i class="fas fa-dna"></i> Cultivos</a>
+    <a href="guia.html" class="nav-item"><i class="fas fa-book"></i> Guía de Cultivos</a>S
+                <a href="configuracion.html" class="nav-item"><i class="fas fa-cog"></i> Configuración</a>
+            </nav>
+            <div class="sidebar-footer"><button class="nav-item" id="logoutBtn" style="width:100%;border:none;background:none;cursor:pointer;font-family:Inter,sans-serif;text-align:left;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button></div>
+        </aside>
+        
+        <main class="main-content" id="mainContent">
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                    <a href="productores.html" class="back-btn"><i class="fas fa-arrow-left"></i> <span>Volver</span></a>
+                    <div class="mobile-logo"><img src="../../assets/img/logo.png" alt="PIXCAPP" class="mobile-logo-img"><span class="mobile-logo-text">PIXCAPP</span></div>
+                    <h1 class="page-title" id="productorTitle">Productor</h1>
+                </div>
+            </header>
+            
+            <div class="content" id="productorContent">
+                <p style="color:var(--color-text-muted);">Cargando...</p>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        (function(){ document.body.setAttribute('data-theme',localStorage.getItem('theme')||'light'); })();
+        window.addEventListener('storage',(e)=>{ if(e.key==='theme') document.body.setAttribute('data-theme',e.newValue||'light'); });
+        
+        const API='../../api'; let currentUser=null, productorId=null;
+        const urlParams=new URLSearchParams(window.location.search);
+        productorId=urlParams.get('id');
+        
+        async function checkAuth(){
+            const t=localStorage.getItem('pixcapp_token'), u=JSON.parse(localStorage.getItem('pixcapp_user')||'{}');
+            if(!t||!u.id){ window.location.href='../../login.html'; return false; }
+            try{ const r=await fetch(`${API}/auth/verify.php`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t}}); const d=await r.json(); if(!d.valid||u.rol!=='ingeniero'){ localStorage.clear(); window.location.href='../../login.html'; return false; } currentUser=d.user||u; return true; }
+            catch(e){ return true; }
+        }
+        
+        async function loadProductor(){
+            if(!productorId){ document.getElementById('productorContent').innerHTML='<p>ID no especificado</p>'; return; }
+            const token=localStorage.getItem('pixcapp_token'), c=document.getElementById('productorContent');
+            try{
+                const r=await fetch(`${API}/ingenieros/ver-productor.php?id=${productorId}`,{headers:{'Authorization':'Bearer '+token}});
+                const d=await r.json();
+                if(d.success){
+                    const p=d.productor;
+                    document.getElementById('productorTitle').textContent=p.nombre;
+                    c.innerHTML=`
+                        <div class="card">
+                            <h3 style="text-align:center;margin-bottom:var(--spacing-md);">${p.nombre}</h3>
+                            <p style="text-align:center;color:var(--color-text-muted);"><i class="fas fa-phone"></i> ${p.telefono||'Sin teléfono'} • <i class="fas fa-envelope"></i> ${p.correo||'Sin correo'}</p>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="section-title"><i class="fas fa-seedling"></i> Parcelas (${d.parcelas?d.parcelas.length:0})</div>
+                            ${d.parcelas&&d.parcelas.length?d.parcelas.map(pa=>`<div class="parcela-item"><div class="parcela-icon"><i class="fas fa-seedling"></i></div><div class="parcela-info"><h4>${pa.nombre}</h4><p class="parcela-meta">${pa.variedad||'Maíz'} • Día ${pa.dias_desde_siembra||'-'} • ${pa.ultimo_evento||'Sin eventos'}</p></div></div>`).join(''):'<p style="color:var(--color-text-muted);">Sin parcelas</p>'}
+                        </div>
+                        
+                        <div class="card">
+                            <div class="section-title"><i class="fas fa-lightbulb"></i> Enviar recomendación</div>
+                            <div class="recomendacion-box">
+                                <textarea id="recomendacionText" placeholder="Escribe una recomendación para este productor..."></textarea>
+                                <button class="btn" id="btnRecomendar" style="margin-top:var(--spacing-md);width:100%;"><i class="fas fa-paper-plane"></i> Enviar</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('btnRecomendar').addEventListener('click',async()=>{
+                        const msg=document.getElementById('recomendacionText').value.trim();
+                        if(!msg){ alert('Escribe un mensaje'); return; }
+                        try{
+                            const rr=await fetch(`${API}/ingenieros/enviar-recomendacion.php`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({agricultor_id:parseInt(productorId),mensaje:msg})});
+                            const rd=await rr.json();
+                            if(rd.success){ alert('Recomendación enviada'); document.getElementById('recomendacionText').value=''; }
+                            else alert(rd.message||'Error');
+                        }catch(e){ alert('Error de conexión'); }
+                    });
+                } else c.innerHTML='<p>Error al cargar</p>';
+            }catch(e){ c.innerHTML='<p>Error de conexión</p>'; }
+        }
+        
+        async function init(){
+            if(!await checkAuth()) return;
+            if(currentUser){ document.getElementById('sidebarUserName').textContent=currentUser.nombre; const a=document.getElementById('userAvatar'), ini=currentUser.nombre.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(); a.innerHTML=currentUser.foto_perfil?`<img src="../../${currentUser.foto_perfil}">`:ini; }
+            document.getElementById('sidebarToggle').addEventListener('click',()=>{ document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('mainContent').classList.toggle('expanded'); });
+            document.getElementById('logoutBtn').addEventListener('click',async()=>{ const t=localStorage.getItem('pixcapp_token'); if(t) try{ await fetch(`${API}/auth/logout.php`,{method:'POST',headers:{'Authorization':'Bearer '+t}}); }catch(e){} localStorage.clear(); window.location.href='../../login.html'; });
+            loadProductor();
+        }
+        
+        init();
+    </script>
+</body>
+</html>

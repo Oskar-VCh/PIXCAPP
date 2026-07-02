@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>Nueva Parcela - PIXCAPP</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --color-primary: #2E7D32; --color-primary-light: #4CAF50; --color-primary-dark: #1B5E20;
+            --color-background: #F5F7FA; --color-surface: #FFFFFF;
+            --color-text-primary: #1A202C; --color-text-secondary: #2D3748; --color-text-muted: #4A5568;
+            --color-border: #E2E8F0; --color-error: #E53E3E; --color-success: #38A169;
+            --color-warning: #ED8936; --color-info: #3182CE;
+            --sidebar-width: 260px; --header-height: 56px;
+            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --spacing-xs: 0.25rem; --spacing-sm: 0.5rem; --spacing-md: 1rem; --spacing-lg: 1.5rem; --spacing-xl: 2rem;
+            --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-full: 9999px;
+            --transition: all 0.2s ease;
+        }
+        
+        [data-theme="dark"] {
+            --color-primary: #66BB6A; --color-primary-light: #81C784; --color-primary-dark: #388E3C;
+            --color-background: #0F172A; --color-surface: #1E293B;
+            --color-text-primary: #F8FAFC; --color-text-secondary: #E2E8F0; --color-text-muted: #CBD5E1;
+            --color-border: #334155;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { font-family: 'Inter', sans-serif; background: var(--color-background); color: var(--color-text-primary); min-height: 100vh; transition: var(--transition); }
+        .app-container { display: flex; min-height: 100vh; }
+        
+        /* SIDEBAR (SOLO DESKTOP) */
+        .sidebar { width: var(--sidebar-width); background: var(--color-surface); border-right: 1px solid var(--color-border); position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; transition: transform 0.3s ease; transform: translateX(0); display: flex; flex-direction: column; }
+        .sidebar.collapsed { transform: translateX(-100%); }
+        .sidebar-header { padding: var(--spacing-lg); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--spacing-md); }
+        .sidebar-logo { height: 34px; width: auto; transition: filter 0.3s ease; }
+        body:not([data-theme="dark"]) .sidebar-logo { filter: brightness(0) invert(0); }
+        [data-theme="dark"] .sidebar-logo { filter: brightness(0) invert(1); }
+        .sidebar-title { font-size: 1.2rem; font-weight: 700; color: var(--color-primary); }
+        .sidebar-user { padding: var(--spacing-lg); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--spacing-md); }
+        .user-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--color-primary-light); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1rem; overflow: hidden; }
+        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .user-info { flex: 1; } .user-name { font-weight: 600; font-size: 0.9rem; } .user-role { font-size: 0.7rem; color: var(--color-text-muted); text-transform: uppercase; }
+        .sidebar-nav { flex: 1; padding: var(--spacing-md); overflow-y: auto; }
+        .nav-item { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-sm) var(--spacing-md); color: var(--color-text-secondary); text-decoration: none; border-radius: var(--radius-md); transition: var(--transition); margin-bottom: 2px; font-size: 0.9rem; }
+        .nav-item i { width: 20px; font-size: 1.05rem; text-align: center; }
+        .nav-item:hover { background: var(--color-background); color: var(--color-primary); }
+        .sidebar-footer { padding: var(--spacing-lg); border-top: 1px solid var(--color-border); }
+        
+        /* MAIN CONTENT */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); transition: margin-left 0.3s ease; display: flex; flex-direction: column; min-height: 100vh; }
+        .main-content.expanded { margin-left: 0; }
+        
+        /* HEADER */
+        .header { background: var(--color-surface); border-bottom: 1px solid var(--color-border); padding: 0 var(--spacing-xl); display: flex; align-items: center; justify-content: space-between; height: var(--header-height); position: sticky; top: 0; z-index: 50; }
+        .header-left { display: flex; align-items: center; gap: var(--spacing-md); flex: 1; }
+        .sidebar-toggle { display: none; background: none; border: none; font-size: 1.3rem; color: var(--color-text-primary); cursor: pointer; padding: var(--spacing-sm); }
+        .back-btn { display: flex; align-items: center; gap: var(--spacing-sm); color: var(--color-text-secondary); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        .back-btn:hover { color: var(--color-primary); }
+        .mobile-logo { display: none; align-items: center; gap: var(--spacing-sm); }
+        .mobile-logo-img { height: 28px; width: auto; transition: filter 0.3s ease; }
+        body:not([data-theme="dark"]) .mobile-logo-img { filter: brightness(0) invert(0); }
+        [data-theme="dark"] .mobile-logo-img { filter: brightness(0) invert(1); }
+        .mobile-logo-text { font-size: 1.05rem; font-weight: 700; color: var(--color-primary); }
+        .page-title { font-size: 1.2rem; font-weight: 700; }
+        
+        /* CONTENT */
+        .content { flex: 1; padding: var(--spacing-xl); }
+        .content-wrapper { max-width: 1000px; margin: 0 auto; }
+        
+        .form-card { background: var(--color-surface); border-radius: var(--radius-xl); border: 1px solid var(--color-border); padding: var(--spacing-xl); margin-bottom: var(--spacing-xl); }
+        .section-title { font-size: 1rem; font-weight: 600; margin-bottom: var(--spacing-lg); display: flex; align-items: center; gap: var(--spacing-sm); }
+        .section-title i { color: var(--color-primary); }
+        .form-group { margin-bottom: var(--spacing-lg); }
+        .form-label { display: flex; align-items: center; gap: var(--spacing-sm); font-weight: 500; color: var(--color-text-secondary); margin-bottom: var(--spacing-sm); font-size: 0.85rem; }
+        .form-label i { color: var(--color-primary); width: 16px; }
+        .form-label .required { color: var(--color-error); } .form-label .optional { color: var(--color-text-muted); font-weight: 400; margin-left: auto; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-lg); }
+        .input-wrapper { position: relative; }
+        .input-icon { position: absolute; left: var(--spacing-md); top: 50%; transform: translateY(-50%); color: var(--color-text-muted); z-index: 1; }
+        .form-input { width: 100%; padding: 0.7rem var(--spacing-md) 0.7rem 2.5rem; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: var(--color-text-primary); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--radius-md); transition: var(--transition); }
+        .form-input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(46,125,50,0.1); }
+        .form-input.error { border-color: var(--color-error); }
+        select.form-input { cursor: pointer; } textarea.form-input { resize: vertical; min-height: 80px; }
+        .error-message { color: var(--color-error); font-size: 0.75rem; margin-top: var(--spacing-xs); }
+        
+        .form-checkbox { display: flex; align-items: flex-start; gap: var(--spacing-sm); cursor: pointer; margin-bottom: var(--spacing-md); }
+        .form-checkbox input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--color-primary); }
+        .form-checkbox label { color: var(--color-text-secondary); font-size: 0.85rem; }
+        .checkbox-hint { font-size: 0.7rem; color: var(--color-text-muted); margin-left: 24px; margin-top: 2px; }
+        
+        .info-box { background: rgba(49,130,206,0.08); border: 1px solid var(--color-info); border-radius: var(--radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-md); }
+        .info-box i { color: var(--color-info); } .info-box p { font-size: 0.85rem; color: var(--color-text-secondary); }
+        
+        .map-container { border-radius: var(--radius-lg); overflow: hidden; border: 2px solid var(--color-border); margin-bottom: var(--spacing-md); }
+        #map { height: 300px; width: 100%; }
+        .map-controls { display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-md); }
+        .btn-map { flex: 1; display: flex; align-items: center; justify-content: center; gap: var(--spacing-sm); padding: var(--spacing-xs) var(--spacing-sm); background: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-secondary); font-size: 0.8rem; cursor: pointer; transition: var(--transition); }
+        .btn-map:hover { background: var(--color-primary); border-color: var(--color-primary); color: white; }
+        .coordinates { display: flex; gap: var(--spacing-lg); font-size: 0.8rem; color: var(--color-text-muted); padding: var(--spacing-sm) 0; }
+        
+        .photo-upload { display: flex; align-items: center; gap: var(--spacing-lg); }
+        .photo-preview { width: 90px; height: 90px; border-radius: var(--radius-lg); background: var(--color-background); border: 2px dashed var(--color-border); display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: var(--transition); }
+        .photo-preview:hover { border-color: var(--color-primary); }
+        .photo-preview i { font-size: 1.8rem; color: var(--color-text-muted); }
+        .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-info { font-size: 0.8rem; color: var(--color-text-muted); }
+        
+        .form-actions { display: flex; justify-content: flex-end; gap: var(--spacing-md); padding-top: var(--spacing-lg); border-top: 1px solid var(--color-border); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--spacing-sm); padding: 0.65rem 1.5rem; font-size: 0.9rem; font-weight: 600; border: none; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); min-width: 120px; }
+        .btn-primary { background: var(--color-primary); color: white; } .btn-primary:hover { background: var(--color-primary-dark); } .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-secondary { background: transparent; color: var(--color-text-secondary); border: 1px solid var(--color-border); } .btn-secondary:hover { background: var(--color-background); }
+        
+        .alert { padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg); display: flex; align-items: center; gap: var(--spacing-md); font-size: 0.85rem; }
+        .alert-error { background: rgba(229,62,62,0.1); border: 1px solid var(--color-error); color: var(--color-error); }
+        .alert-success { background: rgba(56,161,105,0.1); border: 1px solid var(--color-success); color: var(--color-success); }
+        .alert-warning { background: rgba(237,137,54,0.1); border: 1px solid var(--color-warning); color: var(--color-warning); }
+        .alert-info { background: rgba(49,130,206,0.1); border: 1px solid var(--color-info); color: var(--color-info); }
+        
+        .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .loading-spinner { width: 40px; height: 40px; border: 3px solid white; border-top-color: var(--color-primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        @media (max-width: 768px) {
+            .sidebar { display: none !important; } .sidebar-toggle { display: none !important; }
+            .main-content { margin-left: 0 !important; }
+            .header { padding: 0 var(--spacing-md); }
+            .mobile-logo { display: flex; } .page-title { display: none; }
+            .content { padding: var(--spacing-md); }
+            .form-card { padding: var(--spacing-lg); }
+            .form-row { grid-template-columns: 1fr; gap: var(--spacing-md); }
+            #map { height: 200px; }
+            .photo-upload { flex-direction: column; align-items: flex-start; }
+            .form-actions { flex-direction: column; } .btn { width: 100%; }
+            .back-btn span { display: none; }
+        }
+        
+        @media (min-width: 769px) {
+            .sidebar-toggle { display: flex; } .mobile-logo { display: none; } .page-title { display: block; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR DESKTOP -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../../assets/img/logo.png" alt="PIXCAPP" class="sidebar-logo">
+                <span class="sidebar-title">PIXCAPP</span>
+            </div>
+            <div class="sidebar-user">
+                <div class="user-avatar" id="userAvatar"><i class="fas fa-user"></i></div>
+                <div class="user-info"><div class="user-name" id="sidebarUserName">Cargando...</div><div class="user-role">Agricultor</div></div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="cultivos.html" class="nav-item"><i class="fas fa-seedling"></i> Mis Cultivos</a>
+                <a href="reportes.html" class="nav-item"><i class="fas fa-chart-bar"></i> Reportes</a>
+                <a href="guia.html" class="nav-item"><i class="fas fa-book"></i> Guía de Cultivos</a>
+                <a href="ingeniero.html" class="nav-item"><i class="fas fa-user-tie"></i> Mi Ingeniero</a>
+                <a href="configuracion.html" class="nav-item"><i class="fas fa-cog"></i> Configuración</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="nav-item" id="logoutBtn" style="width:100%;border:none;background:none;cursor:pointer;font-family:Inter,sans-serif;text-align:left;">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+        
+        <main class="main-content" id="mainContent">
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                    <a href="cultivos.html" class="back-btn"><i class="fas fa-arrow-left"></i> <span>Volver</span></a>
+                    <div class="mobile-logo">
+                        <img src="../../assets/img/logo.png" alt="PIXCAPP" class="mobile-logo-img">
+                        <span class="mobile-logo-text">PIXCAPP</span>
+                    </div>
+                    <h1 class="page-title">Nueva Parcela</h1>
+                </div>
+            </header>
+            
+            <div class="content">
+                <div class="content-wrapper">
+                    <div id="alertContainer"></div>
+                    
+                    <form id="parcelaForm">
+                        <div class="form-card">
+                            <h2 class="section-title"><i class="fas fa-info-circle"></i> Información Básica</h2>
+                            <div class="form-group">
+                                <label class="form-label" for="nombre"><i class="fas fa-tag"></i> Nombre de la parcela <span class="required">*</span></label>
+                                <div class="input-wrapper"><i class="fas fa-seedling input-icon"></i><input type="text" id="nombre" class="form-input" placeholder="Ej: Parcela La Esperanza" required></div>
+                                <div class="error-message" id="nombreError"></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="cultivo_id"><i class="fas fa-leaf"></i> Tipo de cultivo <span class="required">*</span></label>
+                                    <div class="input-wrapper"><i class="fas fa-seedling input-icon"></i><select id="cultivo_id" class="form-input" required><option value="">Selecciona</option></select></div>
+                                    <div class="error-message" id="cultivoError"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="variedad"><i class="fas fa-certificate"></i> Variedad <span class="required">*</span></label>
+                                    <div class="input-wrapper"><i class="fas fa-tag input-icon"></i><select id="variedad" class="form-input" required><option value="">Selecciona</option><option value="Blanco Criollo">Blanco Criollo</option><option value="Amarillo Híbrido">Amarillo Híbrido</option><option value="Azul Criollo">Azul Criollo</option></select></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="fecha_siembra"><i class="fas fa-calendar"></i> Fecha de siembra <span class="required">*</span></label>
+                                <div class="input-wrapper"><i class="fas fa-calendar-alt input-icon"></i><input type="date" id="fecha_siembra" class="form-input" required></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="area_m2"><i class="fas fa-vector-square"></i> Área (m²) <span class="optional">Opcional</span></label>
+                                    <div class="input-wrapper"><i class="fas fa-vector-square input-icon"></i><input type="number" id="area_m2" class="form-input" placeholder="Ej: 500"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="hectareas"><i class="fas fa-map"></i> Hectáreas</label>
+                                    <div class="input-wrapper"><i class="fas fa-calculator input-icon"></i><input type="text" id="hectareas" class="form-input" readonly placeholder="Auto"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-card">
+                            <h2 class="section-title"><i class="fas fa-map-marker-alt"></i> Ubicación <span class="required">*</span></h2>
+                            <div class="info-box"><i class="fas fa-info-circle"></i><p>Haz clic en el mapa para marcar la ubicación exacta.</p></div>
+                            <div class="map-container"><div id="map"></div></div>
+                            <div class="map-controls">
+                                <button type="button" class="btn-map" id="getLocationBtn"><i class="fas fa-location-dot"></i> Mi ubicación</button>
+                                <button type="button" class="btn-map" id="searchLocationBtn"><i class="fas fa-search"></i> Buscar</button>
+                            </div>
+                            <div class="coordinates"><span id="latDisplay"><i class="fas fa-map-pin"></i> Lat: --</span><span id="lngDisplay"><i class="fas fa-map-pin"></i> Lon: --</span></div>
+                            <input type="hidden" id="latitud"><input type="hidden" id="longitud">
+                            <div class="error-message" id="ubicacionError"></div>
+                        </div>
+                        
+                        <div class="form-card">
+                            <h2 class="section-title"><i class="fas fa-layer-group"></i> Configuración adicional</h2>
+                            <label class="form-checkbox"><input type="checkbox" id="policultivo"><span><strong>Policultivo</strong> (comparte espacio con otros cultivos)</span></label>
+                            <div class="checkbox-hint"><i class="fas fa-info-circle"></i> Marca si siembras diferentes cultivos en el mismo terreno.</div>
+                            <div class="form-group" style="margin-top:var(--spacing-lg);">
+                                <label class="form-label" for="notas"><i class="fas fa-pen"></i> Notas</label>
+                                <textarea id="notas" class="form-input" rows="3" placeholder="Información adicional..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-card">
+                            <h2 class="section-title"><i class="fas fa-camera"></i> Foto principal <span class="optional" style="margin-left:auto;">Opcional</span></h2>
+                            <div class="photo-upload">
+                                <div class="photo-preview" id="photoPreview" onclick="document.getElementById('foto').click()"><i class="fas fa-camera"></i></div>
+                                <div class="photo-info"><p>Haz clic para agregar foto</p><p style="font-size:0.7rem;">JPG, PNG (máx. 5MB)</p><button type="button" class="btn-map" id="removePhotoBtn" style="margin-top:var(--spacing-sm);display:none;"><i class="fas fa-trash"></i> Eliminar</button></div>
+                                <input type="file" id="foto" accept="image/*" style="display:none;">
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="window.location.href='dashboard.html'"><i class="fas fa-times"></i> Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-save"></i> Guardar Parcela</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div></div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // TEMA GLOBAL
+        (function(){ document.body.setAttribute('data-theme',localStorage.getItem('theme')||'light'); })();
+        window.addEventListener('storage',(e)=>{ if(e.key==='theme') document.body.setAttribute('data-theme',e.newValue||'light'); });
+        
+        const API='../../api'; let map,marker,currentUser=null,fotoBase64=null;
+        
+        async function checkAuth(){
+            const t=localStorage.getItem('pixcapp_token'), u=JSON.parse(localStorage.getItem('pixcapp_user')||'{}');
+            if(!t||!u.id){ window.location.href='../../login.html'; return false; }
+            try{
+                const r=await fetch(`${API}/auth/verify.php`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t}});
+                const d=await r.json();
+                if(!d.valid||u.rol!=='agricultor'){ localStorage.removeItem('pixcapp_token'); localStorage.removeItem('pixcapp_user'); window.location.href='../../login.html'; return false; }
+                currentUser=d.user||u; return true;
+            }catch(e){ return true; }
+        }
+        
+        async function init(){
+            if(!await checkAuth()) return;
+            if(currentUser){
+                document.getElementById('sidebarUserName').textContent=currentUser.nombre;
+                const a=document.getElementById('userAvatar'), ini=currentUser.nombre.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+                a.innerHTML=currentUser.foto_perfil?`<img src="../../${currentUser.foto_perfil}">`:ini;
+            }
+            document.getElementById('sidebarToggle').addEventListener('click',()=>{ document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('mainContent').classList.toggle('expanded'); });
+            document.getElementById('logoutBtn').addEventListener('click',async()=>{ const t=localStorage.getItem('pixcapp_token'); if(t) try{ await fetch(`${API}/auth/logout.php`,{method:'POST',headers:{'Authorization':'Bearer '+t}}); }catch(e){} localStorage.clear(); window.location.href='../../login.html'; });
+            
+            const fi=document.getElementById('foto'), pp=document.getElementById('photoPreview'), rb=document.getElementById('removePhotoBtn');
+            fi.addEventListener('change',(e)=>{ const f=e.target.files[0]; if(f){ if(f.size>5242880){ showAlert('Máximo 5MB','error'); return; } const r=new FileReader(); r.onload=(ev)=>{ pp.innerHTML=`<img src="${ev.target.result}">`; fotoBase64=ev.target.result; rb.style.display='block'; }; r.readAsDataURL(f); } });
+            rb.addEventListener('click',()=>{ fi.value=''; pp.innerHTML='<i class="fas fa-camera"></i>'; fotoBase64=null; rb.style.display='none'; });
+            document.getElementById('area_m2').addEventListener('input',(e)=>{ document.getElementById('hectareas').value=((parseFloat(e.target.value)||0)/10000).toFixed(4)+' ha'; });
+            
+            initMap(); loadCultivos(); document.getElementById('fecha_siembra').value=new Date().toISOString().split('T')[0];
+        }
+        
+        function initMap(){
+            map=L.map('map').setView([19.4326,-99.1332],5);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+            map.on('click',(e)=>setLocation(e.latlng.lat,e.latlng.lng));
+            document.getElementById('getLocationBtn').addEventListener('click',()=>navigator.geolocation?.getCurrentPosition(p=>setLocation(p.coords.latitude,p.coords.longitude),()=>showAlert('No se pudo obtener ubicación','error')));
+            document.getElementById('searchLocationBtn').addEventListener('click',()=>{ const s=prompt('Ubicación:'); if(s) fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(s)}`).then(r=>r.json()).then(d=>{ if(d.length) setLocation(parseFloat(d[0].lat),parseFloat(d[0].lon)); else showAlert('No encontrado','error'); }).catch(()=>showAlert('Error','error')); });
+        }
+        
+        function setLocation(lat,lng){
+            if(marker) marker.setLatLng([lat,lng]); else marker=L.marker([lat,lng]).addTo(map);
+            map.setView([lat,lng],15);
+            document.getElementById('latitud').value=lat; document.getElementById('longitud').value=lng;
+            document.getElementById('latDisplay').innerHTML=`<i class="fas fa-map-pin"></i> Lat: ${lat.toFixed(6)}°`;
+            document.getElementById('lngDisplay').innerHTML=`<i class="fas fa-map-pin"></i> Lon: ${lng.toFixed(6)}°`;
+        }
+        
+        async function loadCultivos(){
+            const s=document.getElementById('cultivo_id');
+            try{ const r=await fetch(`${API}/cultivos/listar.php`); const d=await r.json(); if(d.success&&d.cultivos) d.cultivos.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.nombre_comun; s.appendChild(o); }); else s.innerHTML+='<option value="1">Maíz (Zea mays)</option>'; }
+            catch(e){ s.innerHTML+='<option value="1">Maíz (Zea mays)</option>'; }
+        }
+        
+        function showAlert(m,t='error'){ const c=document.getElementById('alertContainer'), i=t==='error'?'fa-exclamation-circle':t==='success'?'fa-check-circle':t==='warning'?'fa-exclamation-triangle':'fa-info-circle'; c.innerHTML=`<div class="alert alert-${t}"><i class="fas ${i}"></i><span>${m}</span></div>`; if(t!=='error') setTimeout(()=>c.innerHTML='',5000); }
+        function showLoading(){ document.getElementById('loadingOverlay').style.display='flex'; }
+        function hideLoading(){ document.getElementById('loadingOverlay').style.display='none'; }
+        
+        document.getElementById('parcelaForm').addEventListener('submit',async(e)=>{
+            e.preventDefault();
+            const nombre=document.getElementById('nombre').value.trim(), cultivo=document.getElementById('cultivo_id').value, lat=document.getElementById('latitud').value, lng=document.getElementById('longitud').value;
+            let ok=true;
+            if(!nombre){ document.getElementById('nombreError').textContent='Requerido'; ok=false; } else document.getElementById('nombreError').textContent='';
+            if(!cultivo){ document.getElementById('cultivoError').textContent='Selecciona un cultivo'; ok=false; } else document.getElementById('cultivoError').textContent='';
+            if(!lat||!lng){ document.getElementById('ubicacionError').textContent='Selecciona ubicación en el mapa'; ok=false; } else document.getElementById('ubicacionError').textContent='';
+            if(!ok) return;
+            
+            const token=localStorage.getItem('pixcapp_token'), btn=document.getElementById('submitBtn'), orig=btn.innerHTML;
+            btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Guardando...'; btn.disabled=true; showLoading();
+            
+            const fd={nombre,cultivo_id:cultivo,variedad:document.getElementById('variedad').value,fecha_siembra:document.getElementById('fecha_siembra').value,latitud:parseFloat(lat),longitud:parseFloat(lng),area_m2:document.getElementById('area_m2').value||null,policultivo:document.getElementById('policultivo').checked?1:0,notas:document.getElementById('notas').value.trim(),foto_principal:fotoBase64};
+            
+            try{
+                if(!fd.policultivo){
+                    const cr=await fetch(`${API}/parcelas/verificar-duplicado.php`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({latitud:fd.latitud,longitud:fd.longitud})});
+                    const cd=await cr.json();
+                    if(cd.duplicado){ if(!confirm(cd.mensaje+'\n\n¿Continuar?')){ btn.innerHTML=orig; btn.disabled=false; hideLoading(); return; } }
+                }
+                const rr=await fetch(`${API}/parcelas/crear.php`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(fd)});
+                const dd=await rr.json();
+                if(dd.success){ showAlert('¡Parcela creada exitosamente!','success'); const cc=JSON.parse(localStorage.getItem('pixcapp_cultivos')||'[]'); cc.push(dd.parcela); localStorage.setItem('pixcapp_cultivos',JSON.stringify(cc)); setTimeout(()=>window.location.href='dashboard.html',1500); }
+                else { showAlert(dd.message||'Error','error'); btn.innerHTML=orig; btn.disabled=false; }
+            }catch(er){
+                if(!navigator.onLine){ const op={...fd,id:'temp_'+Date.now(),fecha_creacion:new Date().toISOString(),estado:'activo'}; const cc=JSON.parse(localStorage.getItem('pixcapp_cultivos')||'[]'); cc.push(op); localStorage.setItem('pixcapp_cultivos',JSON.stringify(cc)); const sq=JSON.parse(localStorage.getItem('pixcapp_sync_queue')||'[]'); sq.push({tipo:'parcela',datos:fd,fecha:new Date().toISOString()}); localStorage.setItem('pixcapp_sync_queue',JSON.stringify(sq)); showAlert('Guardado localmente. Se sincronizará al conectar.','warning'); setTimeout(()=>window.location.href='dashboard.html',1500); }
+                else { showAlert('Error de conexión','error'); btn.innerHTML=orig; btn.disabled=false; }
+            }
+            hideLoading();
+        });
+        
+        init();
+    </script>
+</body>
+</html>
